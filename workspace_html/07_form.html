@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        text : <input type="text"><br>
+        text(기본값) : <input><br>
+        text(value) : <input type="text" name="val" value="초기값"><br>
+        text(placeholder) : <input type="text" placeholder="플레이스 홀더"><br>
+        text(readonly) : <input type="text" value="리드온리" readonly><br>
+        text(disabled) : <input type="text" value="disabled" disabled><br>
+        password : <input type="password"><br>
+        input:button : <input type="button" value="input:button"><br>
+        button : <button type="button" name="btn" value="1">button</button><br>
+        submit : <input type="submit" ><br>
+        submit : <input type="submit" value="전송"><br>
+        button(기본값:submit) : <button>submit</button><br>
+        이미지를 버튼 태그로 감싼다<br>
+        <button type="button">
+            <img src="asset/Spongebob-Christmas-PNG-Picture.png" alt="스폰지밥이 웃고있는 사진">
+        </button>
+        <hr>
+        checkbox :
+        <input type="checkbox" name="coffee" value="1">샷추가
+        <input type="checkbox" name="coffee" value="2" checked>펄추가
+        <input type="checkbox" name="coffee" value="3" disabled>휘핑크림
+        <input type="checkbox" name="coffee" value="4" >시럽
+        <input type="checkbox" name="coffee" >간얼음
+        <br>
+        radio :
+        <input type="radio" name="china" checked>짜장면
+        <input type="radio" name="china" disabled>마파두부밥
+        <input type="radio" name="china">삼선짬뽕
+        <br>
+        <input type="radio" name="gender" value="여자" checked>여자
+        <input type="radio" name="gender" value="남자" checked>남자
+        <br>
+        select :
+        <select name="sel1">
+            <option value="1">한식</option>
+            <option value="2">중식</option>
+            <option value="3">양식11111111</option>
+            <option value="4" selected>분식</option>
+            <option value="5">일식</option>
+        </select>
+        <br>
+        select - multiple:
+        <select multiple size="3">
+            <option>한식</option>
+            <option>중식</option>
+            <option>양식11111111</option>
+            <option selected>분식</option>
+            <option>일식</option>
+        </select>
+        <br>
+        <label>
+            <input type="checkbox">
+            펄추가  
+        </label>
+        <br>
+        <input type="checkbox" id="perl">
+        <label for="perl">펄추가</label>
+        <br>
+        <textarea rows="10" cols="50" placeholder="placeholder" name="ta">미리
+            보여줄 글<br>
+            <!-- 주석 -->
+        </textarea>
+        <hr>
+        reset : <input type="reset" value="reset"><br>
+        color : <input type="color"><br>
+        date : <input type="date" name="date" value="2026-06-24"><br>
+        time : <input type="time"><br>
+        number : <input type="number"><br>
+        range : <input type="range"
+                        min="10"
+                        max="100"
+                        step="10"
+                        >
+    </form>
+    <hr>
+    <!--
+        form 속성
+        method : get, post
+        method 기본값 : get
+
+        action : 전송할 주소
+        acrion 기본값 : 현재 내 주소
+    -->
+    <form method="get">
+        <input type="text" name="song"><br>
+        <input type="text"><br>
+        <input type="text" name="singer"><br>
+        <input type="submit" value="get 연습">
+    </form>
+
+    <form method="get" action="https://search.naver.com/search.naver">
+        <input type="text" name="query"><br>
+        <input type="submit" value="네이버 검색">
+    </form>
+    <form method="get" action="https://www.google.com/search" target="_blank">
+        <input type="text" name="q"><br>
+        <input type="submit" value="구글 검색">
+    </form>
+    <form method="post">
+        <input type="text" name="query"><br>
+        <input type="submit" value="post 연습">
+    </form>
+
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 테이블 -->
+    <table border="1">
+        <!-- tr: table row 한 줄을 뜻함 -->
+        <tr>
+            <!--
+                td: table data 한 칸을 뜻함
+                상하 정렬 기능 있음
+              -->
+            <td>내용1</td>
+            <td>내용2<br>두번째 줄</td>
+            <td>내용3</td>
+        </tr>
+
+        <tr>
+            <td>
+                내용2-1 !!!!!!!!!
+            </td>
+            <td>
+                내용2-2 !!!!!!!!!
+            </td>
+            <td>
+                내용2-3 !!!!!!!!!
+            </td>
+        </tr>
+    </table>
+
+    <table border="1">
+        <tr>
+            <!--
+                th: table header 컬럼의 제목
+                두꺼운 글씨로 상하좌우 정렬 적용 됨
+            -->
+            <th>내용1</th>
+            <th>내용2<br>두번째 줄</th>
+            <th>내용3</th>
+        </tr>
+
+        <tr>
+            <td>
+                내용2-1 !!!!!!!!!
+            </td>
+            <td>
+                내용2-2 !!!!!!!!!
+            </td>
+            <td>
+                내용2-3 !!!!!!!!!
+            </td>
+            <!-- td가 아닌 곳 -->
+             <!--
+                각 줄마다 칸의 개수가 같아야 한다
+                같지 않으면 디자인이 이상해진다
+            -->
+            <td>
+                내용2-4 !!!!!!!!!
+            </td>
+        </tr>
+    </table>
+
+    <table border="1">
+        <tr>
+            <th>지역</th>
+            <td>천안</td>
+            <td>통영</td>
+        </tr>
+        <tr>
+            <th>이름</th>
+            <td>민수</td>
+            <td>개똥</td>
+        </tr>
+    </table>
+
+    <!-- table>tr*2>td*3 -->
+    <table border="1">
+        <tr>
+            <td rowspan="2">1-1</td>
+            <td colspan="2">1-2</td>
+            <!-- <td>1-3</td> -->
+        </tr>
+        <tr>
+            <!-- <td>2-1</td> -->
+            <td>2-2</td>
+            <td>2-3</td>
+        </tr>
+    </table>
+
+    <hr>
+    <h1>테이블의 정석 구성</h1>
+    <table border="1">
+
+        <caption>테이블 내용에 대한 설명</caption>
+        <summary>제목, 작성자 <!--(컬럼 나열)--></summary>
+
+        <thead>
+            <tr>
+                <th>제목</th>
+                <th>작성자</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>제목1</td>
+                <td>작성자1</td>
+            </tr>
+            <tr>
+                <td>제목2</td>
+                <td>작성자2</td>
+            </tr>
+        </tbody>
+
+    </table>
+    <!-- table>tr*2>td -->
+    <table border="1">
+        <tr>
+            <th width="200" height="100">첫번째</th>
+        </tr>
+        <tr>
+            <td width="250" height="50">두번째</td>
+        </tr>
+    </table>
+</body>
+</html>
