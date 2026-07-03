@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            border: 1px solid red;
+            height: 130px;
+            width: 100px;
+            /* width: 130px; */
+            margin: 10px;
+        }
+        .hidden {
+            overflow: hidden;
+        }
+        .scroll {
+            overflow: scroll;
+        }
+        .overflow-y {
+            /* y 스크롤을 보장하라 */
+            overflow-y: scroll;
+            /* overflow-x: scroll; */
+        }
+
+        .auto {
+            overflow: auto;
+        }
+
+        .parent {
+            border: 1px solid red;
+            width: 300px;
+            white-space: nowrap;
+            overflow: auto;
+        }
+        .parent div {
+            border: 1px solid brown;
+            display: inline-block;
+            width: 100px;
+            margin: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="box hidden">
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Perferendis consequatur molestias tempora officia odit. Est esse quos nihil autem quae a odio minima molestiae nulla quaerat. Libero eligendi cumque nobis.
+    </div>
+    <div class="box scroll">
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Perferendis consequatur molestias tempora officia odit. Est esse quos nihil autem quae a odio minima molestiae nulla quaerat. Libero eligendi cumque nobis.
+    </div>
+    <div class="box scroll">
+        Lorem ipsum
+    </div>
+    <div class="box overflow-y">
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Perferendis consequatur molestias tempora officia odit. Est esse quos nihil autem quae a odio minima molestiae nulla quaerat. Libero eligendi cumque nobis.
+    </div>
+    <div class="box auto">
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Perferendis consequatur molestias tempora officia odit. Est esse quos nihil autem quae a odio minima molestiae nulla quaerat. Libero eligendi cumque nobis.
+    </div>
+
+    div>div*5
+    <div class="parent">
+        <div>항목1</div>
+        <div>항목2</div>
+        <div>항목3</div>
+        <div>항목4</div>
+        <div>항목5</div>
+    </div>
+
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+</html>
