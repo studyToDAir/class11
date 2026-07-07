@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+
+        let j = 10;
+        j = j + 1;
+        j += 1;
+        j++;
+
+        j--;
+        
+        ++j;
+        --j;
+
+        let k = 10;
+        k++;
+        console.log('k++ 이후 : '+ k)
+        ++k;
+        console.log('++k 이후 : '+ k)
+
+        k = 10;
+        console.log('k++', k++)
+        console.log('k', k)
+
+        k = 10;
+        console.log('++k', ++k)
+        console.log('k', k)
+
+        k = 10
+        let m = k++ + 1;
+        // m? 11, k? 11
+        k = 10
+        m = ++k + k++
+        // m?   , k?
+        console.log(`m: ${m}, k: ${k}`)
+
+        k = 10
+        m = k-- + ++k - --k
+        console.log(`m: ${m}, k: ${k}`)
+
+        k = 10
+        ++k;
+        k++;
+
+        console.log('-----------------')
+
+        let boolA = true
+        let boolB = false
+        let result = boolA && boolB
+        console.log('and : ', result)
+        
+        result = boolA || boolB
+        console.log('or : ', result)
+        
+        console.log('!boolA', !boolA)
+
+        console.log('같은가? ', boolA == boolB )
+        console.log('같지않은가? ', boolA != boolB )
+
+        let n = 3
+        let o = "3"
+        console.log("n == o", n == o)
+        console.log( typeof n )
+        console.log( typeof o )
+        console.log("n === o", n === o)
+        console.log("n !== o", n !== o)
+
+        console.log( typeof o == 'string')
+
+        let num = 2
+        result = (num % 2) == 0 ? '짝수' : '홀수';
+        console.log(result)
+        
+        // 문제1
+        // 난 돈이 10,000원 있음
+        // 1. 4800 피스타치오를 최대 몇 잔 살 수 있는가
+        // 2. 그리고 남는 돈은?
+        let q1_money = 10000
+        let q1_pay = 4800
+        console.log( parseInt(q1_money / q1_pay) )
+        console.log( q1_money % q1_pay )
+
+        // 문제2
+        // 올리브영에 꿀홍차가 8000원입니다
+        // 15% 세일!! 그렇다면 가격은?
+        let q2_money = 8000
+        let q2_per = 15
+        console.log(  q2_money - (q2_money * q2_per / 100)  )
+
+        // 문제3
+        // 1234를 10의 자리 이하 버림
+        // 결과 : 1200
+        let q3_value = 1234
+        let q3_1 = q3_value / 100 // 12.34
+        let q3_2 = parseInt(q3_1) // 12
+        let q3_3 = q3_2 * 100
+        let q3_4 = parseInt(q3_value / 100) * 100
+        console.log(q3_3)
+
+        // 문제4
+        // 두 값 1000, 794가 있을 때
+        // 1000 / 794의 결과를 소수점 2자리 까지만 출력
+        // 결과 : 1.25
+        let q4_val_1 = 1000
+        let q4_val_2 = 794
+        let q4 = parseInt((q4_val_1 / q4_val_2) * 100) / 100
+        console.log(q4)
+
+        // 문제5
+        // 17,000원을 줄 때
+        // 5천원과 1천원짜리 밖에 없을 때
+        // 각각 몇 장씩 줄 수 있는가?
+        // 단, 최대한 5천원을 많이 준다
+        let q5_money = 17000
+        let q5_5000 = parseInt(q5_money / 5000)
+        let q5_money2 = (q5_money % 5000)
+        let q5_1000 = parseInt(q5_money2 / 1000)
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
