@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        // 문제 5-2
+        // 가위바위보 게임 만들기
+        // 1. 컴퓨터가 랜덤으로 선택하게 만들기
+        // 2. 사용자의 선택 받기
+        // 3. 승패 결정하기
+        let rand = Math.random() // 0 <= rand < 1
+        rand = parseInt(rand * (2+1)) // 0~2까지 랜덤
+        // 0:가위 1:바위 2:보
+        // let user = '가위'
+        let user = prompt('가위바위보 중에 하나 적으시오')
+        // console.log('user : ', user)
+        let a = user || '취소누름'
+        console.log('user : ', typeof user, a)
+
+
+        console.log(rand)
+        if(rand == 0) { // 컴퓨터가 가위
+            if(user == '가위'){
+                console.log('비겼다')
+            } else if (user == '바위'){
+                console.log('이겼다')
+            } else if (user == '보') {
+                console.log('졌다')
+            } else {
+                console.log('다시 정확한 선택을 하세요')
+            }
+        } else if (rand == 1) { // 컴퓨터가 바위
+            if(user == '바위'){
+                console.log('비겼다')
+            } else if (user == '보'){
+                console.log('이겼다')
+            } else {
+                console.log('졌다')
+            }
+        } else if (rand == 2) { // 컴퓨터가 보
+            if(user == '바위'){
+                console.log('졌다')
+            } else if (user == '보'){
+                console.log('비겼다')
+            } else {
+                console.log('이겼다')
+            }
+        }
+
+        if(user == rand){
+            console.log('비겼다')
+        } else if (user=='보' && rand==1
+                    || user=='바위' && rand==0
+                    || user=='가위' && rand==2
+        ) {
+            console.log('이겼다')
+        } else {
+            console.log('졌다')
+        }
+
+
+        console.log((0 
+            || 4
+            || 3
+            || 0))
+        if ((4 
+            || 0 
+            || 7 
+            || 0) == 3 ){
+            console.log('참')
+        }
+        else {
+            console.log('거짓')
+        }
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

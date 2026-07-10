@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        /*
+            배열 array
+
+            한번에 여러 변수를 만드는 기술
+            각 변수는 index로 구분한다
+            index는 0번부터 시작
+        */
+        // 배열 선언 방법 1
+        const arr1 = []
+        console.log( typeof arr1 )
+
+        // 배열 선언 방법 2
+        const arr2 = new Array()
+
+        let arr3 = [1, 2, "글씨", false, 3.14, arr1]
+        const arr4 = new Array(1, 2, "글씨", false, 3.14, arr1)
+
+        console.log( 'arr3:', arr3 )
+        console.log( 'arr3[0]:', arr3[0] )
+        console.log( typeof arr3[0] )
+
+        arr3[0] = 10
+        arr3 = [1,2,3]
+
+        let s = "abc"
+        console.log( s[1] )
+
+        let arr = [0,1,2,3,4,5]
+        console.log(arr[60]) // undefined
+
+        let i;
+        console.log(i)
+
+        arr[60] = 60
+        console.log(arr[60])
+        console.log(arr)
+
+        arr['문자'] = '문자'
+        console.log(arr['문자'])
+        console.log(arr)
+
+        arr = [0,1,2,3,4,5]
+        for(let i=0; i<6; i++){
+            console.log(arr[i])
+        }
+        
+        // 배열의 길이
+        console.log('arr.length : ', arr.length)
+        
+        for(let i=0; i<arr.length; i++){
+            console.log(arr[i])
+        }
+
+        const 양식 = ['파스타', '피자', '스테이크', '돈까스', '피시앤칩스']
+        const 중식 = ['짜장', '짬뽕', '탕슉', '난자완스', '깐풍기', '꽃빵', '칠리새우']
+        const 일식 = ['라멘', '슈토', '오차즈께', '후토마키', '스키야끼']
+
+        const 음식 = [ 양식, 중식, 일식 ]
+
+        console.log( '음식.length : ', 음식.length )
+        let y = 음식[0]
+        let p = y[0]
+        let 스테이크 = 음식[0][2]
+
+        // 문제
+        // 모든 먹거리를 반복문으로 출력하시오
+        // 단, 변수 음식만 사용한다
+        // console.log( 음식[0][0] )
+        // console.log( 음식[0][1] )
+
+        // for(let i=0; i<음식[0].length; i++){
+        //     console.log(음식[0][i])
+        // }
+
+        // for(let i=0; i<음식[1].length; i++){
+        //     console.log(음식[1][i])
+        // }
+
+        for(let j=0; j<음식.length; j++){
+            for(let i=0; i<음식[j].length; i++){
+                console.log(음식[j][i])
+            }
+        }
+
+        // 배열의 메소드(함수)
+        arr = [1,2,3,4]
+
+        // 맨 마지막에 하나 추가
+        arr.push(5)
+        console.log(arr)
+        
+        // 맨 앞에 추가하기
+        arr.unshift(0)
+        console.log(arr)
+        
+        // 맨 마지막 것 빼기
+        // 뺀 값은 돌려준다
+        // arr.pop()
+        let pop = arr.pop()
+        console.log(arr)
+        console.log(pop)
+
+        // 맨 처음 것 빼서 돌려주기
+        let shift = arr.shift()
+        console.log(arr)
+        console.log(shift)
+
+        // 배열 뒤집기
+        const reverse = arr.reverse()
+        console.log(arr)
+        console.log(reverse)
+
+        // 오름차순 정렬
+        arr = [7,4,2,3,6,5]
+        const sort = arr.sort()
+        console.log(arr)
+        console.log(sort)
+
+        // chaining 체이닝 체인방식 체인
+        // sort.reverse()
+        arr.sort().reverse()
+        console.log(sort)
+
+        arr = [0,1,2,3,4,5,6]
+        let a = arr.slice(2, 5)
+        console.log(arr)
+        console.log(a)
+        a = arr.slice(2, 50)
+        console.log(a)
+
+        a = arr.slice(2)
+        console.log(a)
+
+        let hour = 2
+        hour = '0'+2
+        // 전달인자가 음수면 뒤에서부터 index
+        hour = hour.slice(-2)
+        console.log(hour)
+
+        
+        // 해당 값의 index를 돌려준다
+        let b = arr.indexOf(4)
+        console.log(b)
+        let c = 'todair@naver.com'
+        b = c.indexOf("@")
+        console.log(b)
+        console.log(c.slice(0, b))
+        
+        // 없으면 -1
+        b = c.indexOf("kkk")
+        console.log(b)
+
+        arr = [10, 5, 3]
+        console.log( arr.sort() )
+
+        // 배열을 문자로 만든다
+        // 구분하는 문자를 넣을 수 있고
+        // 없으면 기본값 ,
+        arr = ['a', 'b', 'c']
+        b = arr.join()
+        console.log(b)
+        console.log(arr)
+        console.log(''+arr)
+        b = arr.join(';')
+        console.log(b)
+
+        let d = b.split(';')
+        console.log(d)
+
+        // 네이버 검색결과의 쿼리스트링에서
+        // name이 query인 것의 값을 출력하시오
+        // https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=1234&ackey=lm2glmr8
+        // 답: 1234
+        const url = 'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=1234&ackey=lm2glmr8'
+        let temp = url.split('?')
+        console.log(temp)
+        let qs = temp[1]
+        qs = qs.split('&')
+        console.log(qs)
+        for(let i=0; i<qs.length; i++){
+            let q = qs[i].split('=')
+            let name = q[0]
+            let value = q[1]
+            if(name == 'query'){
+                console.log(value)
+            }
+        }
+
+
+        /*
+            ### 문제1
+            * 10개의 각 변수에 1~10까지 담기
+            결론 : [1,2,3,4,5,6,7,8,9,10] 이걸 자동으로 만드시오
+
+            ### 문제2
+            * [3, 4, 7, 5, 1, 6]
+            * **문제 2-1**
+            * 홀수의 개수 구하기
+            * **문제 2-2**
+            * 4보다 큰 수의 개수 구하기
+
+            <hr>
+            ### 문제3
+            마라톤에 5명의 선수가 참가함. 등번호 1~5번까지
+            대회가 끝났을 때 완주 목록 : [2, 4, 5, 1]
+            완주를 못한 사람은?
+            ### 문제3-1
+            참가목록 : ['나미', '우솝', '조로', '루피', '상디']
+            완주목록 : ['우솝', '나미', '상디', '조로']
+
+            ### 문제4
+            소극장 예약 시스템
+            자리는 10개. 자리 번호 : 1~10까지 번호
+            메뉴 : 1.예약 2.모든 좌석 현황 3.잔여 좌석 x.종료
+            조건1 : 예약이 가능하다면 "n번 자리 예약 완료"
+            조건2 : 예약이 이미 되어있다면 "이미 예약된 자리입니다"
+
+            ### 문제5
+            로또(1~45) 6개 중복없이 출력
+
+        */
+
+    // 숫자야구 게임
+    // 임의의 3자리 숫자인 정답이 있을 때
+    // 스트라이크 : 숫자와 자리가 맞은 개수
+    // 볼 : 숫자는 정답에 있지만 자리가 틀린 수
+    // 아웃 : 하나도 안맞음
+    /*
+        예 : [123]이 정답일 때
+        145 : 1스트라이크
+        135 : 1스트라이크 1볼
+        367 : 1스트라이크
+        328 : 2볼
+    */
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

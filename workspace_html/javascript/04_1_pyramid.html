@@ -1,141 +1,207 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script>
-        let m = '+'
-        let s = '_'
-        // 1단계
-        // +++++
-        // console.log('+++++')
-        let string = ''
-        // string = string + '+'
-        // string = string + '+'
-        for(let i=1; i<=5; i++){
-            string = string + m
-        }
-        console.log(string)
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Document</title>
+	<script>
+		let m = "+";
+		let s = "_";
+		// 1단계
+		// +++++
+		// console.log('+++++')
+		let string = "";
+		// string = string + '+'
+		// string = string + '+'
+		for (let i = 1; i <= 5; i++) {
+			string = string + m;
+		}
+		console.log(string);
 
-        string = ''
-        // 2단계
-        // +_+_+_+_+_
-        for(let i=1; i<=5; i++){
-            string += m
-            string += s
-        }
-        console.log(string)
+		string = "";
+		// 2단계
+		// +_+_+_+_+_
+		for (let i = 1; i <= 5; i++) {
+			string += m;
+			string += s;
+		}
+		console.log(string);
 
-        // 3단계
-        /*
-            +++++
-            +++++
-            +++++
-        */
-       for(let j=1; j<=3; j++){
-            string = ''
-            for(let i=1; i<=5; i++){
-                string = string + m
-            }
-            console.log(string)
-        }
+		// 3단계
+		/*
+			  +++++
+			  +++++
+			  +++++
+		  */
+		for (let j = 1; j <= 3; j++) {
+			string = "";
+			for (let i = 1; i <= 5; i++) {
+				string = string + m;
+			}
+			console.log(string);
+		}
 
-        // 4단계
-        /*
-            11111
-            22222
-            33333
-            44444
-            55555
-        */
-        // string = ''
-        // for(let i=1; i<=5; i++){
-        //     string = string + 1
-        // }
-        // console.log(string)
-        // string = ''
-        // for(let i=1; i<=5; i++){
-        //     string = string + 2
-        // }
-        // console.log(string)
+		// 4단계
+		/*
+			  11111
+			  22222
+			  33333
+			  44444
+			  55555
+		  */
+		// string = ''
+		// for(let i=1; i<=5; i++){
+		//     string = string + 1
+		// }
+		// console.log(string)
+		// string = ''
+		// for(let i=1; i<=5; i++){
+		//     string = string + 2
+		// }
+		// console.log(string)
 
-        for(let j=1; j<=5; j++){
-            string = ''
-            for(let i=1; i<=5; i++){
-                string = string + j
-            }
-            console.log(string)
-        }
+		for (let j = 1; j <= 5; j++) {
+			string = "";
+			for (let i = 1; i <= 5; i++) {
+				string = string + j;
+			}
+			console.log(string);
+		}
 
-        // 5단계
-        /*
-            1
-            22
-            333
-            4444
-            55555
-        */
+		// 5단계
+		/*
+			  1
+			  22
+			  333
+			  4444
+			  55555
+		  */
 
-        // 6단계
-        /*
-            +
-            ++
-            +++
-            ++++
-            +++++
-        */
+		// 6단계
+		/*
+			  +
+			  ++
+			  +++
+			  ++++
+			  +++++
+		  */
 
-        // 7단계
-        /*
-            11111
-            2222
-            333
-            44
-            5
-        */
+		// 7단계
+		/*
+			  11111
+			  2222
+			  333
+			  44
+			  5
+		  */
+		for (let j = 1; j <= 5; j++) {
+			string = "";
+			for (let i = 1; i <= 5 + 1 - j; i++) {
+				string = string + j;
+			}
+			console.log(string);
+		}
 
-        // 8단계
-        /*
-            +____
-            ++___
-            +++__
-            ++++_
-            +++++
-        */
+		console.log("--7단계--");
 
-        // 9단계
-        /*
-            ____+
-            ___++
-            __+++
-            _++++
-            +++++
-        */
+		string = "";
+		for (let j = 1; j <= 5; j++) {
+			string = "";
+			for (let i = 5; i >= j; i--) {
+				string = string + j;
+			}
+			console.log(string);
+		}
 
-        // 10단계
-        /*
-            ____+
-            ___+++
-            __+++++
-            _+++++++
-            +++++++++
-        */
+		for (let a = 1; a <= 9; a++) {
+			string = "";
+			for (let c = 1; c <= 5; c++) {
+				string = string + "-";
+			}
+			for (let c = 1; c <= 1; c++) {
+				string = string + "ㅁ";
+			}
+			for (let b = 8; b >= `${a}`; b--) {
+				string = string + "-";
+			}
+			for (let c = 1; c <= 1; c++) {
+				string = string + "ㅁ";
+			}
+			for (let d = 2; d <= `${a}`; d++) {
+				string = string + "-";
+			}
+			// for(let e=1; e<=1; e++){
+			// string = string + 'ㅁ'
+			// }
+			for (let f = 2; f <= `${a}`; f++) {
+				string = string + "-";
+			}
+			for (let g = 1; g <= 1; g++) {
+				string = string + "ㅁ";
+			}
+			for (let h = 8; h >= `${a}`; h--) {
+				string = string + "-";
+			}
+			for (let i = 1; i <= 1; i++) {
+				string = string + "ㅁ";
+			}
+			for (let j = 1; j <= 10; j++) {
+				string = string + "-";
+			}
+			for (let k = 1; k <= 1; k++) {
+				string = string + "ㅁ";
+			}
+			for (let l = 1; l <= 9; l++) {
+				string = string + "-";
+			}
+			for (let m = 1; m <= 1; m++) {
+				string = string + "ㅁ";
+			}
+			console.log(string);
+		}
 
-        // 11단계
-        /*
-            ____+____
-            ___+++___
-            __+++++__
-            _+++++++_
-            +++++++++
-        */
+		// 8단계
+		/*
+			  +____
+			  ++___
+			  +++__
+			  ++++_
+			  +++++
+		  */
 
-        // 12단계
-        // 입력 받은 줄 수 대로 출력
-    </script>
+		// 9단계
+		/*
+			  ____+
+			  ___++
+			  __+++
+			  _++++
+			  +++++
+		  */
+
+		// 10단계
+		/*
+			  ____+
+			  ___+++
+			  __+++++
+			  _+++++++
+			  +++++++++
+		  */
+
+		// 11단계
+		/*
+			  ____+____
+			  ___+++___
+			  __+++++__
+			  _+++++++_
+			  +++++++++
+		  */
+
+		// 12단계
+		// 입력 받은 줄 수 대로 출력
+	</script>
 </head>
-<body>
-    
-</body>
+
+<body></body>
+
 </html>
