@@ -23,9 +23,16 @@
     */
 
     let power = false   // 전원 상태 저장
-    let lastCh = 0
+
+    let lastCh = 0      // 마지막 채널
     const CH_MAX = 10
     const CH_MIN = 0
+
+    let status_mute = false    // 뮤트 상태
+    let lastVol = 0     // 마지막 볼륨
+    const VOL_MAX = 5
+    const VOL_MIN = 0
+
 
     function powerOn(){
         power = true
@@ -35,6 +42,7 @@
         power = false
         console.log("TV 꺼짐")
     }
+
     function channel(ch){
         if(power){
 
@@ -65,7 +73,6 @@
     }
     function channelDown(){
         if(power){
-
             lastCh--
             if(lastCh < CH_MIN){
                 lastCh = CH_MAX
@@ -81,24 +88,93 @@
     // 볼륨(최초엔 0)
     // 최대:5, 최소:0
     // 5일 때 up 누르면 5 고정
-    // 0일 때 down 누르면 0 고정
+    function volumeUp(){
+        if(power){
+            status_mute = false
 
+            // lastCh = lastCh + 1
+            lastVol++
+            if(lastVol > VOL_MAX){
+                lastVol = VOL_MAX
+            }
+            console.log('볼륨 : '+ lastVol)
+        } else {
+            console.log('전원 꺼져있음')
+        }
+    }
+    // 0일 때 down 누르면 0 고정
+    function volumeDown(){
+        if(power){
+            status_mute = false
+
+            lastVol--
+            if(lastVol < VOL_MIN){
+                lastVol = VOL_MIN
+            }
+            console.log('볼륨 : '+ lastVol)
+        } else {
+            console.log('전원 꺼져있음')
+        }
+    }
     // 음소거(최초엔 음소거 아님)
     // 음소거는 볼륨 조절 시 해제 되어야 함
     function mute(){
         // toggle : 실행 할 때 마다 상태 반전
 
-        // 음소거 상태라면 볼륨 0
-        // 음소거를 해제하면 볼륨은 기존 볼륨
+        if(power){
+            if(status_mute){
+                status_mute = false
+                // 음소거를 해제하면 볼륨은 기존 볼륨
+                console.log('볼륨 : '+ lastVol)
+            } else {
+                status_mute = true
+                // 음소거 상태라면 볼륨 0
+                console.log('볼륨 : 0')
+            }
+            // status_mute = !status_mute
+        } else {
+            console.log('전원 꺼져있음')
+        }
     }
 
-
-    powerOn()
-    channelUp()
+    console.log('-- 전원off 중 테스트 --')
     powerOff()
+    channel(2)
     channelUp()
+    channelDown()
+    volumeUp()
+    volumeDown()
+    mute()
+
+    console.log('-- 전원on 중 테스트 --')
     powerOn()
+    channelUp() // 1
+    channel(5)
+    channelDown()
+    channel(50) // 채널없음
+    channel(-50) // 0
+    channel(10) // 10
     channelUp()
+    channel(0) // 0
+    channelDown()
+
+    
+    volumeUp() // 1
+    volumeDown() // 0
+    volumeDown() // 0
+    volumeUp() // 1
+    volumeUp() // 2
+    volumeUp() // 3
+    volumeUp() // 4
+    volumeUp() // 5
+    volumeUp() // 5
+    mute()     // 0
+    mute()     // 5
+    mute()     // 0
+    volumeDown() // 4
+    mute()     // 0
+    volumeUp() // 5
+    mute()     // 0
 
 </script>
 </head>

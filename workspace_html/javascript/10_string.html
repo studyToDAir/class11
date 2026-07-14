@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<script>
+
+    const str = "기사도가 죽었을 리가"
+
+    // 문자열의 길이
+    console.log('str.length : '+ str.length)
+
+    // indexOf
+    // 동일한 글씨 찾기
+    // 있으면 동일한 첫 번째 글씨 index 반환
+    // 없으면 -1
+    console.log('죽었',str.indexOf('죽었'))
+    console.log('가', str.indexOf('가'))
+    console.log('나', str.indexOf('나'))
+
+    // replace
+    // 첫 번째 전달인자를 두번째 전달인자로 바꾼다
+    // 단, 처음 만나는 것만 바꾼다
+    let s1 = str.replace('죽었', '살았')
+    console.log(str)
+    console.log(s1)
+
+    let s2 = str.replace('가', '나')
+    console.log(s2)
+
+    // 정규 표현식
+    s2 = str.replace(/가/g, '나')
+    console.log(s2)
+
+    // slice
+    // 시작부터 끝 바로 앞까지 복사
+    console.log(  str.slice(3, 6)  )
+
+    // split
+    // 구분자로 배열을 돌려준다
+    console.log(  str.split(' ')  )
+
+    // substring
+    let s = str.substring(3, 6)
+    console.log(str)
+    console.log(s)
+    
+    // substr
+    // 시작index부터 몇 개
+    s = str.substr(3, 7)
+    console.log(s)
+
+    // trim
+    let str2 = "    1 2  3   "
+    s = str2.trim()
+    console.log(s)
+
+    str2 = "      "
+    if(str2.length != 0){}
+    if(str2.trim().length != 0){}
+
+
+    // 문제1
+    // 어떤 이메일에서 id만 출력하기
+
+    // 문제2
+    // 주민번호로 성별 출력하기
+
+    // 문제3
+    // "2026-07-14 12:43:19"
+    // 월, 분 구하기
+
+    // ---------------------
+    // 보안상 당첨 이메일을 가려서 출력
+    // todair@naver.com >>>> to****@naver.com
+    
+    // 문제4
+    // 앞 두글자만 지대루 표시하고 *표 4개 표시하고 @부터 다
+    // "to" + "****" + @부터 끝까지
+
+    // 문제5
+    // 앞 두글자만 지대루 표시하고 *표는 가려진 개수만큼
+    // 예: study.todair@gmail.com >> st**********@gmail.com
+    let email = 'study.todair@gmail.com'
+    
+    // let id = email.split('@')[0]
+
+    let pos = email.indexOf('@')
+    let id = ''
+    if (pos != -1){
+        id = email.slice(0, pos)
+    }
+    let mask_id_1 = id.slice(0, 2)
+    let len = id.length - 2
+    let mask_id_2 = ''
+    for(let i=0; i<len; i++){
+        mask_id_2 += "*"
+    }
+    console.log(mask_id_1 + mask_id_2 + email.substring(pos))
+
+
+
+</script>
+</head>
+<body>
+    
+</body>
+</html>
