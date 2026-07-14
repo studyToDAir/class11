@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<script>
+    // TV 만들기
+    // 채널 : 0~100 까지
+    //   - 100일 때 up을 누르면 0번으로
+    //   - 0일 때 down을 누르면 100번으로
+    
+    // 기능
+    /*
+        전원 on
+        전원 off
+        채널(직접입력)
+        채널 up
+        채널 down
+        볼륨 up
+        볼륨 down
+        음소거 on/off
+    */
+
+    let power = false   // 전원 상태 저장
+    let lastCh = 0
+    const CH_MAX = 10
+    const CH_MIN = 0
+
+    function powerOn(){
+        power = true
+        console.log("TV 켜짐")
+    }
+    function powerOff(){
+        power = false
+        console.log("TV 꺼짐")
+    }
+    function channel(ch){
+        if(power){
+
+            if(ch < CH_MIN || ch > CH_MAX){
+                console.log('채널이 없습니다')
+                return
+            }
+
+            lastCh = ch
+            console.log(ch+'번으로 채널 변경')
+        } else {
+            console.log('전원 꺼져있음')
+        }
+    }
+    function channelUp(){
+        if(power){
+            // lastCh = lastCh + 1
+            lastCh++
+            if(lastCh > CH_MAX){
+                lastCh = CH_MIN
+            }
+            console.log(lastCh+'번으로 채널 변경')
+            
+            // console.log(++lastCh +'번으로 채널 변경')
+        } else {
+            console.log('전원 꺼져있음')
+        }
+    }
+    function channelDown(){
+        if(power){
+
+            lastCh--
+            if(lastCh < CH_MIN){
+                lastCh = CH_MAX
+            }
+            console.log(lastCh+'번으로 채널 변경')
+
+            // console.log(--lastCh +'번으로 채널 변경')
+        } else {
+            console.log('전원 꺼져있음')
+        }
+    }
+
+    // 볼륨(최초엔 0)
+    // 최대:5, 최소:0
+    // 5일 때 up 누르면 5 고정
+    // 0일 때 down 누르면 0 고정
+
+    // 음소거(최초엔 음소거 아님)
+    // 음소거는 볼륨 조절 시 해제 되어야 함
+    function mute(){
+        // toggle : 실행 할 때 마다 상태 반전
+
+        // 음소거 상태라면 볼륨 0
+        // 음소거를 해제하면 볼륨은 기존 볼륨
+    }
+
+
+    powerOn()
+    channelUp()
+    powerOff()
+    channelUp()
+    powerOn()
+    channelUp()
+
+</script>
+</head>
+<body>
+    
+</body>
+</html>
