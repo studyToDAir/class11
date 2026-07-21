@@ -126,7 +126,8 @@ function bind(){
         log(game.style.left)
 
         if(event.keyCode == 39){ // 오른쪽
-
+            // 20px + 10px : 20px10px
+            game.style.left = (parseInt(game.style.left) + 10)+'px'
         }
 
     })
