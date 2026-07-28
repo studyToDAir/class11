@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .bold {
+            font-weight: 900;
+        }
+    </style>
+<script>
+/*
+    문제 1 : 주문과 배송
+    주문 정보 : input으로 이름, 주소
+    ㅁ 주문 정보와 배송 정보가 같습니다
+    배송 정보 : input으로 이름, 주소
+    + 체크하면 주문 정보가 배송 정보로 복사
+    + 체크 풀면 배송 정보 글씨 지우기
+
+    
+    문제 2 : 로그인창
+    로그인 버튼 눌렀을 때
+    아이디 / 비밀번호 없으면 빨간 글씨 나오게
+    단, 아이디/비밀번호를 쓰고 로그인을 누르면 빨간 글씨 지우기
+
+
+    문제 3 : 피자 주문
+    1. 피자 종류 선택 : select
+    - 불고기, 페퍼로니, 포테이토, 치즈, 파인애플, 고르곤졸라
+    2. 사이즈 선택 : radio
+    - small(18000), medium(20000), large(22000)
+    3. 도우 선택 : radio
+    - 씬, 고구마, 치즈, 소보로
+    4. 토핑 : checkbox
+    - 감자(2000), 고구마(2000), 치즈(2500), 베이컨(3000), 옥수수(500), 페페론치노(2500)
+    [확인]
+    + 문제3-1 : 선택 내역 모두 출력
+    + 문제3-2 : 선택 내역과 총액 출력
+
+
+    문제 4 : 메뉴 선택
+    인기상품순, 낮은가격순, 높은가격순, 신상품순, 상품평 많은순
+    + 클릭한 것만 굵은 글씨로 유지
+
+
+    문제 5 : Todo List
+    할일을 적는 input, 추가 버튼
+
+    + 5-1 : 추가버튼 누르면 체크박스와 할일이 하단에 추가된다
+    + 5-2 : 개별 삭제 버튼이 있고, 클릭 시 그 줄이 지워진다 (dom.remove())
+    + 5-3 : 전체 선택 checkbox가 있고
+            전체 선택 체크 시 : 모든 checkbox 체크
+            해제 시 : 모든 checkbox 체크 해제
+    + 5-4 : 전체 선택 후 하나라도 개별 해제가 되면 전체 선택도 해제
+            개별로 모두 체크한 경우 전체 선택도 체크된다
+    + 5-5 : 선택 삭제 버튼 클릭 시 선택된 내용만 삭제
+*/
+
+window.onload = function(){
+    q1()
+    q2()
+    q3()
+    q4()
+    q5()
+}
+function q1(){
+    
+    document.querySelector('#q1 .chk').addEventListener('click', function(event){
+        const order_name = document.querySelector('#q1 .order .name')
+        const order_addr = document.querySelector('#q1 .order .addr')
+
+        const delivery_name = document.querySelector('#q1 .delivery .name')
+        const delivery_addr = document.querySelector('#q1 .delivery .addr')
+
+        /*
+            event.target : 실제로 이벤트가 발생한 것
+            event.currentTarget : 이벤트가 적용되어 있는 것 (this)
+        */
+        if(event.target.checked){
+            delivery_name.value = order_name.value
+            delivery_addr.value = order_addr.value
+        } else {
+            delivery_name.value = ''
+            delivery_addr.value = ''
+        }
+    })
+}
+
+function q2(){
+    
+    // const login = document.querySelector('#q2 #login.do')
+    const login = document.querySelector('#q2 [id="login.do"]')
+    login.addEventListener('click', function(){
+        const id = document.querySelector('#q2 #id')
+        const pw = document.querySelector('#q2 #pw')
+        const warning = document.querySelector('#q2 #warning')
+
+        // if(id.value == ''){
+        console.log(id.value.trim().length, id.value.trim().length == 0)
+        if(id.value.trim().length == 0){
+            warning.innerText = '아이디는 필수입니다'
+        } else if(pw.value.trim().length == 0){
+            warning.textContent = '비밀번호는 필수입니다'
+        } else {
+            warning.textContent = ''
+        }
+    })
+}
+
+function q3(){
+    document.querySelector('#q3 #pay').addEventListener('click', function(){
+        let 종류 = ''
+        let 크기 = ''
+        let 총액 = 0
+        let 도우 = ''
+        let 토핑 = []
+
+
+        const pizza = document.querySelector('#q3 .pizza')
+        console.log(pizza.value)
+        console.log(pizza.options)
+        console.log(pizza.selectedIndex)
+        const option = pizza.options[pizza.selectedIndex]
+        console.log(option.innerText)
+        console.log(option.getAttribute('data-name'))
+        console.log(option.dataset.name)
+        option.dataset.minsu = '강사'
+        종류 = option.getAttribute('data-name')
+
+        const size = document.querySelector('[name="size"]:checked')
+        크기 = size.getAttribute('data-size')
+        총액 += Number(size.getAttribute('data-price'))
+        console.log(총액)
+
+        const dough = document.querySelector('[name="dough"]:checked')
+        도우 = dough.getAttribute('data-dough')
+        
+        const aTopping = document.querySelectorAll('[type="checkbox"]:checked')
+        for( topping of aTopping ){
+            토핑.push(topping.getAttribute('topping'))
+            총액 += Number(topping.getAttribute('price'))
+        }
+
+/*
+        let 종류 = ''
+        let 크기 = ''
+        let 총액 = 0
+        let 도우 = ''
+        let 토핑 = []
+*/
+
+        document.querySelector('#q3 #bill').innerHTML = `
+            종류 : ${종류}<br>
+            크기 : ${크기}<br>
+            도우 : ${도우}<br>
+            토핑 : ${토핑.join()}<br>
+            <hr>
+            총액 : ${총액}<br>
+        `
+    })
+}
+function q4(){
+    document.querySelector('#q4 ul').addEventListener('click', function(event){
+        
+        event.currentTarget.querySelectorAll('li').forEach(function(li){
+            // if(li.classList.contains('bold')){
+                li.classList.remove('bold')
+            // }
+        })
+        event.target.classList.add('bold')
+    })
+}
+function q5(){
+    document.querySelector('#q5 #add').addEventListener('click', function(event){
+        const todo = document.querySelector('#q5 #todo')
+        const list = document.querySelector('#q5 #list')
+
+/*
+            <div style="display:flex; justify-content: space-between;">
+                <input type="checkbox" class="chk">
+                <span>할 일1</span>
+                <button type="button" class="del">삭제</button>
+            </div>
+*/
+
+        const div = document.createElement('div')
+        div.style.justifyContent = 'space-between'
+        div.setAttribute('style', 'display:flex; justify-content: space-between;')
+        div.innerHTML = `
+                <input type="checkbox" class="chk">
+                <span>${todo.value}</span>
+                <button type="button" class="del">삭제</button>
+        `
+        div.querySelector('.del').addEventListener('click', function(event){
+            this.parentNode.remove()
+        })
+        div.querySelector('.chk').addEventListener('click', function(event){
+            // if(event.currentTarget.checked == false)
+            if(!event.currentTarget.checked){
+                document.querySelector('#q5 .chk_all').checked = false
+            } else {
+                const chks = document.querySelectorAll('#q5 .chk')
+                let count = 0
+                for(let i=0; i<chks.length; i++){
+                    if(chks[i].checked){
+                        count++
+                    }
+                }
+                const chks_c = document.querySelectorAll('#q5 .chk:checked')
+                // if(count == chks.length){
+                console.log(chks_c.length , chks.length)
+                if(chks_c.length == chks.length){
+                    document.querySelector('#q5 .chk_all').checked = true
+                }
+            }
+        })
+
+        list.prepend(div)
+        document.querySelector('#q5 .chk_all').checked = false
+        todo.value = ''
+    })
+
+    const list = document.querySelector('#q5 #list')
+    list.addEventListener('click', function(event){
+        if( event.target.classList.contains('del') ){
+            event.target.parentNode.remove()
+        }
+        if( event.target.classList.contains('chk') ){
+            console.log('해당 줄의 checkbox 클릭')
+        }
+    })
+
+    document.querySelector('#q5 .chk_all').addEventListener('click', function(event){
+        const chks = document.querySelectorAll('#q5 .chk')
+        // if(this.checked){
+        //     for(let i=0; i<chks.length; i++){
+        //         chks[i].checked = true
+        //     }
+        // } else {
+        //     for(let i=0; i<chks.length; i++){
+        //         chks[i].checked = false
+        //     }
+        // }
+
+        for(let i=0; i<chks.length; i++){
+            chks[i].checked = this.checked
+        }
+
+    })
+
+    document.querySelector('#q5 .del_selected').addEventListener('click', function(event){
+        const chks_c = document.querySelectorAll('#q5 .chk:checked')
+        let i=0
+        while(i<chks_c.length){
+            chks_c[i].parentElement.remove()
+            i++
+        }
+    })
+
+
+}
+</script>
+</head>
+<body style="height:300vh;">
+    <h1>이벤트 퀴즈 풀이</h1>
+
+    <div id="q1">
+        <h2>quiz 1</h2>
+        주문 정보<br>
+        <div class="order">
+            이름 : <input type="text" class="name"><br>
+            주소 : <input type="text" class="addr">
+        </div>
+        <div>
+            <input type="checkbox" class="chk"> 주문 정보와 배송 정보가 같습니다
+        </div>
+        배송 정보<br>
+        <div class="delivery">
+            이름 : <input type="text" class="name"><br>
+            주소 : <input type="text" class="addr">
+        </div>
+    </div>
+
+    <div id="q2">
+        <h2>quiz 2</h2>
+        아이디 : <input type="text" id="id"><br>
+        비번 : <input type="password" id="pw"><br>
+        <div id="warning" style="color: red;"></div>
+        <input type="button" value="로그인" id="login.do">
+    </div>
+
+    <div id="q3">
+        <h2>quiz 3</h2>
+        종류 : 
+        <select class="pizza">
+            <option value="10" data-name="불고기">불고기</option>
+            <option value="20" data-name="페퍼로니">페퍼로니</option>
+            <option value="30" data-name="포테이토">포테이토</option>
+            <option value="40" data-name="치즈">치즈</option>
+            <option value="50" data-name="파인애플">파인애플</option>
+            <option value="60" data-name="고르곤졸라">고르곤졸라</option>
+        </select>
+        <br>
+        사이즈 : 
+        <input type="radio" name="size" value="10" data-size="small" data-price="18000" checked>small(18000)
+        <input type="radio" name="size" value="20" data-size="medium" data-price="20000">medium(20000)
+        <input type="radio" name="size" value="30" data-size="large" data-price="22000">large(22000)
+        <br>
+        도우 :
+        <input type="radio" name="dough" value="10" data-dough="씬" checked>씬
+        <input type="radio" name="dough" value="20" data-dough="고구마">고구마
+        <input type="radio" name="dough" value="30" data-dough="치즈">치즈
+        <input type="radio" name="dough" value="40" data-dough="소보로">소보로
+        <br>
+        토핑 :
+        <input type="checkbox" value="10" topping="감자" price="2000">감자(2000)
+        <input type="checkbox" value="20" topping="고구마" price="2000">고구마(2000)
+        <input type="checkbox" value="30" topping="치즈" price="2500">치즈(2500)
+        <input type="checkbox" value="40" topping="베이컨" price="3000">베이컨(3000)
+        <input type="checkbox" value="50" topping="옥수수" price="500">옥수수(500)
+        <input type="checkbox" value="60" topping="페페론치노" price="2500">페페론치노(2500)
+        <br>
+        <button type="button" id="pay">확인</button>
+
+        <div id="bill"></div>
+    </div>
+
+    <div id="q4">
+        <ul>
+            <li class="order">인기상품순</li>
+            <li class="order">낮은가격순</li>
+            <li class="order">높은가격순</li>
+            <li class="order">신상품순</li>
+            <li class="order">상품평 많은순</li>
+        </ul>
+    </div>
+
+<!-- 
+    문제 5 : Todo List
+    할일을 적는 input, 추가 버튼
+
+    + 5-1 : 추가버튼 누르면 체크박스와 할일이 하단에 추가된다
+    + 5-2 : 개별 삭제 버튼이 있고, 클릭 시 그 줄이 지워진다 (dom.remove())
+    + 5-3 : 전체 선택 checkbox가 있고
+            전체 선택 체크 시 : 모든 checkbox 체크
+            해제 시 : 모든 checkbox 체크 해제
+    + 5-4 : 전체 선택 후 하나라도 개별 해제가 되면 전체 선택도 해제
+            개별로 모두 체크한 경우 전체 선택도 체크된다
+    + 5-5 : 선택 삭제 버튼 클릭 시 선택된 내용만 삭제    
+-->
+    <div id="q5" style="width: 300px;">
+        <div>
+            <input type="text" id="todo" placeholder="할 일을 입력하세요">
+            <input type="button" value="추가" id="add">
+        </div>
+        <div>
+            <input type="checkbox" class="chk_all">전체 선택
+            <button type="button" class="del_selected">선택 삭제</button>
+        </div>
+        <div id="list">
+            <!-- <div id="todo_1" style="display:flex; justify-content: space-between;">
+                <input type="checkbox" class=chk>
+                <span>할 일1</span>
+                <button type="button" class="del" del="todo_1">삭제</button>
+            </div>
+            <div style="display:flex; justify-content: space-between;">
+                <input type="checkbox">
+                <span>할 일1</span>
+                <button type="button" class="del">삭제</button>
+            </div> -->
+        </div>
+    </div>
+
+</body>
+</html>
