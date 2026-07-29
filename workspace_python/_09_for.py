@@ -74,3 +74,9 @@ while dice != 3 :
     if dice == 3 :
         print(count)
 
+
+import turtle as t
+t.shape('turtle')
+
+while True :
+    print(1)
