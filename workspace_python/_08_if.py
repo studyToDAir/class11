@@ -73,3 +73,5 @@ match a :
     case _ :
         print('그 외')
 
+# 표현식
+print( 3 if 3 > 2 else 2 if 2 < 3 else 1  )

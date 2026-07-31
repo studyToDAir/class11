@@ -78,5 +78,25 @@ while dice != 3 :
 import turtle as t
 t.shape('turtle')
 
-while True :
-    print(1)
+# while True :
+#     print(1)
+
+
+a = [  i*10 if i%2 == 0 else i for i in range(10)  ]
+for i in range(10) :
+    if i%2 == 0:
+        a.append(i*10)
+    else :
+        a.append(i)
+
+a = 20
+i = 0
+while i < 10 :
+    if i == a :
+        print('찾음')
+        break
+    i += 1
+else :
+    print('못찾음')
+# while의 else는 break를 만나지 않고 종료되는 경우 else문 실행 됨
+

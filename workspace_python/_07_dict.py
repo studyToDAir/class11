@@ -152,7 +152,7 @@ users = {
 이런 경우 
 id/pw를 입력 받거나 변수에 넣어두고
 id/pw가 맞는지 틀리는지 판단해서
-"아이디가 틀립니다", "비번이 틀립니다", "로그인 성공"
+"아이디가 없습니다", "비번이 틀립니다", "로그인 성공"
 
 
 문제5
@@ -164,5 +164,11 @@ id/pw가 맞는지 틀리는지 판단해서
 '''
 
 
-
+users = {
+    "admin": "1234",
+    "guest": "guest",
+    "user1": "abcd"
+}
+for i, item in enumerate(users.items()) :
+    print(i, item[0], item[1])
 
