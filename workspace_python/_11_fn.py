@@ -4,6 +4,9 @@ def hello() :
     print('hello world')
 hello()
 
+a = hello
+a()
+
 def add(a, b) :
     # __doc__
     # 함수 첫줄의 주석 글씨를 출력해준다
@@ -57,6 +60,7 @@ def print_numbers2(*a) :
 
 print_numbers2(1)
 print_numbers2(1,2,3,4)
+print_numbers2()
 
 def print_numbers3(c, *a) :
     print(c)
@@ -84,6 +88,8 @@ info(**x) # key=value, key=value
 def info2(**a):
     for k, v in a.items() :
         print(k, v)
+    return 1
+
 info2(**x)
 
 def info3(name, age, addr='비공개') :
