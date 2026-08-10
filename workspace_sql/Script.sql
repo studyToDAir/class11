@@ -870,7 +870,8 @@ where mgr = 7839;
 
 with recursive emp_recu as (
 	select 
-		empno, ename, mgr, 
+		empno, ename, mgr,
+		lpad(ename, length(ename), ' '),
 		1 as level,
 		cast(ename as char(200)) as sort_key
 	from emp
@@ -878,16 +879,45 @@ with recursive emp_recu as (
 	union all
 	select
 		e.empno, e.ename, e.mgr, 
+		lpad(e.ename, (er.level*4)+length(e.ename), ' '),
 		er.level+1 as level,
 		concat(er.sort_key, '-', cast(e.ename as char(200))) as sort_key
 	from emp e
 		join emp_recu er on (e.mgr = er.empno)
 )
-select * from emp_recu;
+select * from emp_recu
+order by sort_key;
 
+/*
+문제 1
+1981년에 입사한 사원 중에서
+급여가 가장 낮은 사원을 조회하시오
 
+문제 2
+각 부서 별
+급여가 가장 높은 사원 가장 낮은 사원의 차이를 조회하시오
+출력 : 부서명, 차이 금액
 
+문제 3
+BLAKE보다 높은 연봉을 받는 사람들 출력
 
+문제 4
+JONES랑 같은 job을 가진 사람들
 
+문제 5
+급여 등급 별 사원 수를 등급 오름차순으로 정렬
+단, 모든 등급을 표시한다
 
+문제 6
+이름, 급여, 급여 등급, 부서 이름 조회
+단, 급여 등급 3 이상만 조회.
+급여 등급 내림차순, 등급이 같은 경우 급여 내림차순, 급여가 같은 경우 이름 내림차순
+
+문제 7
+부서명이 SALES인 사원 중
+급여 등급이 2 또는 3인 사원을 급여 내림차순으로 정렬
+ */
+
+select * from emp
+order by deptno;
 
