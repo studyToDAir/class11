@@ -203,6 +203,8 @@ select count(*) from emp;
 
 select max(sal) from emp;
 select min(sal) from emp;
+select max(ename) from emp;
+select min(ename) from emp;
 
 select sum(sal) from emp;
 
@@ -462,6 +464,28 @@ select
 from emp where ename = 'SCOTT';
 
 
+-- having 없이 서브쿼리로 해결해보자
+-- 1. 부서 별 평균 연봉 출력
+select avg(sal)
+from emp
+group by deptno;
+-- 2. 부서 별 평균 연봉이 2000 이상인 부서만 출력
+-- having 사용
+select avg(sal) avg_sal
+from emp
+-- where avg_sal >= 2000 -- 별칭은 select 이후에 사용 가능
+-- where avg(sal) >= 2000 -- 집계 함수 사용 불가
+group by deptno
+having avg(sal) >= 2000;
+
+-- 서브쿼리 사용
+select *
+from (
+	select avg(sal) avg_sal
+	from emp
+	group by deptno
+) a
+where avg_sal >= 2000;
 
 
 select * from dept;
@@ -572,6 +596,298 @@ select deptno, dname, empno, ename
 from dept d
 	left outer join emp e using(deptno)
 order by deptno, ename;
+
+-- DDL
+-- create
+desc emp;
+
+create table emp2(
+	empno int(4) primary key,
+	ename varchar(10) not null,
+	job varchar(9),
+	mgr int(4),
+	hiredate date,
+	sal decimal(7, 2), -- 총 7자리, 그 중 2자리 소수점
+	comm decimal(7,2),
+	deptno int(2)
+);
+select * from emp2;
+desc emp2;
+
+desc dept;
+create table dept2 (
+	deptno int(2) primary key,
+	dname varchar(14),
+	loc varchar(13)
+);
+select * from dept2;
+
+-- 테이블 복사
+create table emp_copy
+as select * from emp;
+
+select * from emp_copy;
+
+create table emp_copy2
+as select * from emp where 1 <> 1;
+
+select * from emp_copy2;
+
+create table dept3
+as select * from dept where 1 != 1;
+select * from dept3;
+
+create table emp3 (
+	empno int(4),
+	ename varchar(10) not null,
+	job varchar(9),
+	mgr int(4),
+	hiredate date,
+	sal decimal(7, 2), -- 총 7자리, 그 중 2자리 소수점
+	comm decimal(7,2),
+	deptno int(2),
+	primary key (empno), 
+	foreign key (deptno) references dept3(deptno)
+);
+
+-- 테이블 삭제
+drop table dept3;
+
+create table dept3 (
+	deptno int(2) primary key,
+	dname varchar(14),
+	loc varchar(13)
+);
+
+-- alter
+alter table emp3
+add gender varchar(10) not null default '남';
+select * from emp3;
+
+alter table emp3
+change gender gender2 varchar(10);
+select * from emp3;
+
+alter table emp3
+rename column gender2 to gender3;
+select * from emp3;
+
+alter table emp3
+drop column gender;
+select * from emp3;
+
+alter table emp3
+rename to emp4;
+select * from emp4;
+
+drop table emp4;
+drop table dept3;
+
+select * from emp_copy;
+truncate table emp_copy;
+
+select * from dept2;
+drop table dept2;
+
+select * from emp2;
+drop table emp2;
+
+create table dept2 (
+	deptno int(2) primary key,
+	dname varchar(14),
+	loc varchar(13)
+);
+create table emp2 (
+	empno int(4),
+	ename varchar(10) not null,
+	job varchar(9) default 'CLERK',
+	mgr int(4),
+	hiredate date default now(),
+	sal decimal(7, 2), -- 총 7자리, 그 중 2자리 소수점
+	comm decimal(7,2),
+	deptno int(2),
+	primary key (empno), 
+	foreign key (deptno) references dept2(deptno)
+);
+select * from emp2;
+
+insert into dept2
+values (
+	10,
+	'휴먼',
+	'천안'
+);
+
+
+
+
+insert into emp2
+values (
+	1000, 
+	'최민수', 
+	'MANAGER', 
+	2000, 
+	'2026-08-09',
+	4000,
+	100,
+	10
+);
+select * from emp2;
+
+insert into emp2 (empno, ename, sal, comm, deptno)
+values (1001, '강사최민수', 4100, 150, 10);
+
+-- ename은 not null 제한. 
+-- insert에 누락하면 null이 들어간다
+-- 그래서 에러 발생
+/*
+insert into emp2 (empno, sal, comm, deptno)
+values (1001, 4100, 150, 10);
+*/
+
+-- primary key
+-- unique + not null
+/*
+insert into emp2 (empno, ename, sal, comm, deptno)
+values (1001, '강사', 4100, 150, 10);
+*/
+
+-- dept 테이블에 deptno 20값이 없어서 에러
+/*
+insert into emp2 (empno, ename, sal, comm, deptno)
+values (1002, '강사', 4100, 150, 20);
+*/
+
+insert into emp2 (empno, ename, sal, comm, deptno)
+values 
+(1012, '강사2', 4100, 150, 10),
+(1013, '강사3', 4100, 150, 10),
+(1014, '강사4', 4100, 150, 10);
+
+select * from emp2;
+
+-- update
+update emp2
+set 
+	sal = 1000,
+	comm = 200;
+select * from emp2;
+
+update emp2
+set 
+	sal = sal * 1.1,
+	comm = comm * 1.2
+where empno = 1002;
+select * from emp2;
+
+select * from dept2;
+update dept2
+set deptno = 20
+where deptno = 10;
+
+
+delete from emp2
+where empno = 1002;
+select * from emp2;
+
+rollback;
+select * from emp2;
+select * from dept2;
+
+commit;
+rollback;
+delete from emp2
+where empno = 1013;
+select * from emp2;
+rollback;
+select * from emp2;
+
+select *
+from emp e
+	left outer join emp e2 on(e.mgr = e2.empno)
+	left outer join dept d on(e.deptno = d.deptno)
+order by e.ename desc;
+
+select * from emp
+order by empno desc;
+
+-- index
+create index idx_emp_empno_desc
+on emp(empno desc);
+
+select * from emp
+order by empno desc;
+
+select * from emp
+where deptno = 10;
+
+create index idx_emp_deptno
+on emp(deptno);
+
+select * from emp
+where deptno = 10;
+
+select *
+from emp force index (idx_emp_deptno)
+where deptno = 10
+order by deptno;
+
+-- mariadb 한글 한 글자는 3Byte
+select length('한구');
+select length('ab');
+
+select max(empno)+1 from emp;
+
+-- sequence
+create table emp_auto (
+	empno int auto_increment,
+	ename varchar(50),
+
+	primary key(empno)
+);
+
+insert into emp_auto (ename)
+values ('민수');
+
+select * from emp_auto;
+
+insert into emp_auto (ename)
+values ('민수2');
+select * from emp_auto;
+
+
+-- 무한 대댓글
+
+select 
+	empno, ename, mgr, 1 as level
+from emp
+where mgr is null
+union all
+select 
+	empno, ename, mgr, 2 as level
+from emp
+where mgr = 7839;
+
+with recursive emp_recu as (
+	select 
+		empno, ename, mgr, 
+		1 as level,
+		cast(ename as char(200)) as sort_key
+	from emp
+	where mgr is null
+	union all
+	select
+		e.empno, e.ename, e.mgr, 
+		er.level+1 as level,
+		concat(er.sort_key, '-', cast(e.ename as char(200))) as sort_key
+	from emp e
+		join emp_recu er on (e.mgr = er.empno)
+)
+select * from emp_recu;
+
+
+
+
 
 
 
