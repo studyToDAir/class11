@@ -921,3 +921,192 @@ JONES랑 같은 job을 가진 사람들
 select * from emp
 order by deptno;
 
+/*
+ * 문제 1
+1981년에 입사한 사원 중에서
+급여가 가장 낮은 사원을 조회하시오
+
+1981-01-01 ~ 12-31
+
+*/
+select * from emp;
+
+
+select min(sal) from emp
+where hiredate >= '1981-01-01' and hiredate <= '1981-12-31';
+
+select * from emp
+where sal = 950;
+
+select * from emp
+where sal = (select min(sal) from emp
+			 where hiredate >= '1981-01-01' and hiredate <= '1981-12-31')
+and hiredate like '1981%';
+
+select substr(HIREDATE, 1, 4) from emp;
+
+/*
+각 부서 별
+급여가 가장 높은 사원 가장 낮은 사원의 차이를 조회하시오
+출력 : 부서명, 차이 금액
+*/
+
+select deptno, max(sal), min(sal) from emp
+group by deptno;
+select * from emp
+where deptno = 10
+order by sal;
+
+select dept.dname, max(emp.sal) - min(emp.sal) 
+from emp, dept
+where emp.deptno = dept.deptno
+group by emp.deptno, dept.dname;
+
+/*
+BLAKE보다 높은 연봉을 받는 사람들 출력
+ */
+select sal from emp
+where ename = 'BLAKE';
+
+select * from emp
+where sal > (select sal from emp
+				where ename = 'BLAKE');
+
+/*
+ * JONES랑 같은 job을 가진 사람들
+ */
+select * from emp
+where job = (select job from emp
+				where ename = 'JONES');
+
+
+/*
+ * 급여 등급 별 사원 수를 등급 오름차순으로 정렬
+단, 모든 등급을 표시한다
+ */
+
+select s.grade, count(*)
+from salgrade s
+	left outer join emp e 
+		on (e.sal <= s.hisal and e.sal >= s.losal)
+group by s.grade
+order by s.grade;
+
+select count(e.ename) 사원수,grade 등급
+from emp e,salgrade s
+where sal>=losal and
+sal<=hisal
+group by grade desc;
+
+/*
+이름, 급여, 급여 등급, 부서 이름 조회
+단, 급여 등급 3 이상만 조회.
+급여 등급 내림차순, 등급이 같은 경우 급여 내림차순, 급여가 같은 경우 이름 내림차순
+*/
+select e.ename, e.sal, s.grade, d.dname
+from salgrade s
+	left outer join emp e 
+		on (e.sal <= s.hisal and e.sal >= s.losal)
+	left outer join dept d
+		on(e.deptno = d.deptno)
+where s.grade >= 3
+order by s.grade desc, sal desc, ename desc;
+
+/*
+부서명이 SALES인 사원 중
+급여 등급이 2 또는 3인 사원을 급여 내림차순으로 정렬
+ */
+select *
+from emp e
+left outer join salgrade s on (e.sal <= s.hisal and e.sal >= s.losal)
+left outer join dept d on (e.deptno = d.deptno)
+where d.dname = 'SALES'
+and s.grade in (2, 3)
+order by sal desc;
+
+select * from emp;
+select * from dept;
+
+
+-- 문제1
+select ename, sal, dname 
+from emp e, dept d
+where e.deptno = d.deptno
+and sal > 2000;
+
+-- 문제2
+select ename, sal, s.GRADE
+from emp e
+	left outer join salgrade s
+		on (e.sal between s.losal and s.hisal)
+where sal >= 1000 and sal <= 3000;
+
+-- 문제3
+select ename, hiredate, dname
+from emp e
+	left outer join dept d using(deptno)
+order by hiredate;
+
+
+-- 문제4
+select ename, dname, sal, grade
+from emp e, dept d, salgrade s
+where e.deptno = d.deptno
+and e.sal between s.losal and s.hisal
+and s.grade >= 3
+order by sal desc;
+
+-- 문제5
+-- 1단계 : 부서 별 평균 급여 구하기
+select avg(sal)
+from emp
+where deptno = 10
+group by deptno;
+
+select * from emp
+where sal > (select avg(sal)
+				from emp
+				where deptno = 10
+				group by deptno)
+and deptno = 10
+union all
+select * from emp
+where sal > 2175.000000
+and deptno = 20;
+
+select * from emp;
+
+
+select * 
+from emp e1
+where sal > (select avg(sal)
+				from emp e2 
+				where e2.deptno = e1.deptno
+				group by deptno);
+
+
+select deptno, avg(sal)
+from emp
+group by deptno;
+
+
+select *
+from emp e, (select deptno, avg(sal) avg_sal
+				from emp
+				group by deptno) a
+where e.deptno = a.deptno
+and e.sal > a.avg_sal;
+
+
+select *
+from emp e
+	left outer join (select deptno, avg(sal) avg_sal
+				from emp
+				group by deptno) a
+	on e.deptno = a.deptno
+where  e.sal > a.avg_sal;
+
+
+
+
+
