@@ -67,6 +67,59 @@ def add_todo43(todo: Todo) -> dict:
         'code': 'SUCC 200 OK'
     }
 
+@todo_router.get('/todo/{todo_id}')
+async def get_single_todo(todo_id: int) -> dict :
+    print('todo_id :', todo_id)
+
+    for todo in todo_list:
+        if todo.id == todo_id:
+            return {
+                'todo': todo
+            }
+    return {
+        'message': 'id 없음'
+    }
+
+# Valid, Validate 유효성 검증
+from fastapi import Path
+@todo_router.get('/todo2/{todo_id}')
+async def get_single_todo2(todo_id: int = Path(gt=10, le=100)) -> dict :
+    print('todo_id :', todo_id)
+
+    for todo in todo_list:
+        if todo.id == todo_id:
+            return {
+                'todo': todo
+            }
+    return {
+        'message': 'id 없음'
+    }
+
+from typing import Annotated
+
+ValidTodoId = Annotated[int, Path(ge=10)]
+
+@todo_router.get('/todo3/{todo_id}')
+# async def get_single_todo3(todo_id: Annotated[int, Path(ge=10)]) -> dict :
+async def get_single_todo3(todo_id: ValidTodoId) -> dict :
+    print('todo_id :', todo_id)
+
+    for todo in todo_list:
+        if todo.id == todo_id:
+            return {
+                'todo': todo
+            }
+    return {
+        'message': 'id 없음'
+    }
+
+# get 방식일 때 즉 ? 뒤에 오는 query string
+from fastapi import Query
+@todo_router.get('/todo4')
+def todo4(id:int = Query(gt=0, lt=10000)):
+    print(id)
+
+
 print(2, __name__)
 if __name__ == "__main__":
     print('todo.py 파일 직접 실행')
