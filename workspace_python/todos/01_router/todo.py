@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Form, Request
 # from fastapi import Form
+from model import Todo
 
+from fastapi import APIRouter
 todo_router = APIRouter()
-
-todo_list = []
-
 @todo_router.post('/todo')
 async def add_todo(todo:dict) -> dict :
     print('todo:', todo)
@@ -41,7 +40,7 @@ async def todoParamPost(id : int = Form(), item:str = Form()) -> dict :
 @todo_router.post('/todo/param2')
 @todo_router.put('/todo/param2')
 @todo_router.delete('/todo/param2')
-async def todoParam(req:Request) -> dict :
+async def todoParam(req : Request) -> dict :
     if req.method == 'GET':
         data = req.query_params
     else :
@@ -56,6 +55,14 @@ async def todoParam(req:Request) -> dict :
         "item": item
     }
 
+# 43페이지 실습이라서 todo43
+@todo_router.post('/todo43')
+def add_todo43(todo: Todo) -> dict:
+    print(f'todo: {todo}')
+    todo_list.append(todo)
+    return {
+        'code': 'SUCC 200 OK'
+    }
 
 print(2, __name__)
 if __name__ == "__main__":
