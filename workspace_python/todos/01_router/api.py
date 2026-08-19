@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 
 from todo import todo_router
+from crud import crud_router
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ def welcome() -> dict :
     }
 
 app.include_router(todo_router)
+app.include_router(crud_router)
 
 @app.get('/ip')
 def test(req : Request):
