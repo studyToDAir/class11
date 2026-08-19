@@ -9,6 +9,7 @@ class Todo3(BaseModel) :
 
 
 crud_router = APIRouter()
+# crud_router = APIRouter( prefix='/crud' )
 
 todo_list = []
 
@@ -194,3 +195,4 @@ def crud_api_delete(todo3: Todo3):
         if todo_list[i].id == todo3.id:
             todo_list.pop(i)
             break
+

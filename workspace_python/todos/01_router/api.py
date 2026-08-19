@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 
 from todo import todo_router
 from crud import crud_router
@@ -21,6 +21,8 @@ def welcome() -> dict :
     }
 
 app.include_router(todo_router)
+# app.include_router(crud_router, prefix='/crud')
+app.include_router(crud_router, prefix='/api/v1')
 app.include_router(crud_router)
 
 @app.get('/ip')
@@ -29,6 +31,19 @@ def test(req : Request):
     print(ip)
 
     return ip
+
+@app.get('/err')
+def err():
+    print('/err 실행')
+
+    raise HTTPException(
+        status_code=403,
+        detail="글씨 아무거나 asdofihweo"
+    )
+
+@app.get('/html')
+def html():
+    return "<h1>hello world</h1>"
 
 print(1, __name__)
 
