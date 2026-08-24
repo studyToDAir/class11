@@ -3,6 +3,7 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
+# 템플릿 폴더를 지정하면서 생성
 templates = Jinja2Templates(directory='templates/')
 
 @app.get('/hello')

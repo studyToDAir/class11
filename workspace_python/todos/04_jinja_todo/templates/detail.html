@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>상세 페이지</h1>
+
+    id : {{todo.id}}<br>
+    <div>
+        item : {{todo.item}}<br>
+    </div>
+    <!-- <div class="d-none">
+        item : <input type='text' value='{{todo.item}}'><br>
+    </div> -->
+
+    <hr>
+
+    <a href="/list">목록으로</a>
+    <a href="/update?id={{todo.id}}">수정</a>
+    <form method="post" action="/api/delete">
+        <input type="hidden" name="id" value="{{todo.id}}">
+        <input type="submit" value="삭제">
+    </form>
+    <!-- <a href="/api/delete?id={{todo.id}}">삭제</a> -->
+</body>
+</html>

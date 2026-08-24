@@ -114,7 +114,7 @@ async def crud() :
 # get : Depends()
 async def crud_r(todo3: Annotated[Todo3, Depends()]) -> Todo3 | None:
     print('/crud/r')
-   
+    
     id = todo3.id
 
     print(5, 'id:', id)
