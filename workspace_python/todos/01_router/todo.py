@@ -123,3 +123,5 @@ def todo4(id:int = Query(gt=0, lt=10000)):
 print(2, __name__)
 if __name__ == "__main__":
     print('todo.py 파일 직접 실행')
+    todo4(1)
+

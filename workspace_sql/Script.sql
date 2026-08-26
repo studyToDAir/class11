@@ -1108,5 +1108,28 @@ where  e.sal > a.avg_sal;
 
 
 
+select * from emp3;
+
+insert into dept3
+select * from dept;
+
+insert into emp3
+select * from emp;
+commit;
+
+update emp3
+set sal = sal * 1.1
+where deptno = 30 
 
 
+-- drop table emp3;
+drop table dept3;
+
+select * from emp3;
+select * from dept3;
+
+desc emp3;
+
+
+delete from emp3
+where empno = 1

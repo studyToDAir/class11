@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let a = '{{count}}' //파이썬에서 넘어온 count 값을 js의 변수에 넣기
+        console.log(a)
+        if( count == 0 ){
+            alert('가입에 실패했습니다. js if')
+        }
+        {%  if count == 0  %}
+            alert('가입에 실패했습니다. jinja if')
+        {% endif %}
+    </script>
+</head>
+<body>
+    <h1>emp 추가</h1>
+    <div>
+        
+    {%  if count == 0  %}
+        <script>
+            alert('가입에 실패했습니다.')
+        </script>
+        가입에 실패했습니다. <br>
+    {% endif %}
+{#
+    {{ succ }}
+    {%  if not succ  %}
+        가입에 실패했습니다<br>
+    {% endif %}
+#}
+    </div>
+    <!--
+        1. 사원 정보 입력할 수 있는 form
+        2. submit
+            -- 방식 POST
+            -- 주소 /api/add
+            -- [POST] /api/add
+    -->
+    <form method="post" action="/api/add">
+        empno : <input type="text" name="empno"><br>
+        ename : <input type="text" name="ename"><br>
+        job : <input type="text" name="job"><br>
+        mgr : <input type="text" name="mgr"><br>
+        hiredate : <input type="text" name="hiredate"><br>
+        sal : <input type="text" name="sal"><br>
+        comm : <input type="text" name="comm"><br>
+        deptno : <input type="text" name="deptno"><br>
+
+        <br>
+        <input type="submit" value="[추가]시도츄라이츄라이">
+        <a href="/list">
+            <input type="button" value="취소(목록으로)">
+        </a>
+    </form>
+</body>
+</html>

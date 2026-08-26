@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            width: 600px;
+            margin: 0 auto;
+        }
+        .tools {
+            text-align: right;
+            margin: 10px 0
+        }
+        table {
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>전체 목록</h1>
+    <div class="tools">
+        <!--
+            추가
+            1. 추가 페이지로 이동
+                - 전달인자 없음
+                - REST API(주소) 필요
+        -->
+        <a href="/add">
+            <button type="button">추가</button>
+        </a>
+    </div>
+    <table border=1>
+        <thead>
+            <tr>
+                <th>empno</th>
+                <th>ename</th>
+                <th>job</th>
+                <th>mgr</th>
+                <th>hiredate</th>
+                <th>sal</th>
+                <th>comm</th>
+                <th>deptno</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in emp_list %}
+            <tr>
+                <td>{{emp.empno}}</td>
+                <td><a href='/detail/{{emp.empno}}'>{{emp.ename}}</a></td>
+                <td>{{emp.job}}</td>
+                <td>
+                    {% if emp.mgr == None %}
+                        -
+                    {% else %}
+                        {{emp.mgr}}
+                    {% endif %}
+                </td>
+                <td>{{emp.hiredate}}</td>
+                <td>{{emp.sal}}</td>
+                <td>
+                    {# {{emp.comm == None}} #}
+                    {% if emp.comm == None %}
+                        -
+                    {% else %}
+                        {{emp.comm}}
+                    {% endif %}
+                </td>
+                <td>{{emp.deptno}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

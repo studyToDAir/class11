@@ -19,7 +19,13 @@ def insert_dept():
     connect = sqlite3.connect('sqlite.db')
     cursor = connect.cursor()
 
-    cursor.execute('''
+    # a = (10, '1강의실', '천안')
+    # cursor.execute(f'''
+    #     insert into dept (deptno, dname, loc)
+    #     values ({a[0]}, {a[1]}, {a[2]})
+    # ''')
+    # SQL Injection 공격 방지
+    cursor.execute(f'''
         insert into dept (deptno, dname, loc)
         values (?, ?, ?)
     ''', (10, '1강의실', '천안'))
