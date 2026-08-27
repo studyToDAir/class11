@@ -24,15 +24,25 @@ def emp_list_deptno20():
 
     try:
         with connect.cursor() as cursor :
+        # 연결된 DB에서 sql을 실행할 수 있는 객체를 얻어온다
 
             sql = '''
                 select * from emp
                 where deptno = %s
             '''
+            # %s : 플레이스홀더
+            # 값을 넣을 수 있는 자리
+            # 안전한 sql을 만들기 위함
 
             cursor.execute(sql, (20,))
+            # 전달값은 튜플로 작성한다
+            # 플레이스홀더에 순서대로 반영된다
 
+            # fetchall : 전체 목록 가져오기
+            # fetchone : 맨 위 하나만 가져오기
             emp_list = cursor.fetchall()
+            
+            
             print(emp_list)
     except Exception as e :
         print(e)

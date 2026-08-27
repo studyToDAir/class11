@@ -120,12 +120,23 @@ def api_add(
             'comm': empDTO.comm,
             'deptno': empDTO.deptno
         })
+        
+        # rowcount
+        # insert, update, delete등을 통해 
+        # 영향을 받은 줄의 수
         count = result.rowcount
+        
+        # commit : auto commit이 아닌 경우 직접 확정해야 한다
         session.commit()
     except:
         print('오류! except로 빠짐')
+        # 오류 추적 내용 출력
         traceback.print_exc()
+        
+        # 제약 조건 등의 오류 발생 시
+        # 모두 되돌리기
         session.rollback()
+
 
     # TODO 어디로 갈지 정하자
 
