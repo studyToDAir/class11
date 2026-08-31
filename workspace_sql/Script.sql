@@ -1132,4 +1132,27 @@ desc emp3;
 
 
 delete from emp3
-where empno = 1
+where empno = 1;
+
+
+select * from emp
+order by sal
+limit 10, 3;
+-- 10:건너뛰고 11부터
+-- 3개 출력
+
+select ceil(count(*) / 한 페이지에 보여 줄 수) from emp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
