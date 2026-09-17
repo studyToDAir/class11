@@ -1125,7 +1125,7 @@ where deptno = 30
 -- drop table emp3;
 drop table dept3;
 
-select * from emp3;
+select * from emp;
 select * from dept3;
 
 desc emp3;
