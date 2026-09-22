@@ -4,6 +4,8 @@ from fastapi import APIRouter
 import re
 from util import es, load_documents, formatter, gemini
 from elasticsearch import helpers
+import time
+
 
 router = APIRouter(tags=["임베딩 관련 라우터"])
 
@@ -143,15 +145,6 @@ def ingest_embed_documents():
     documents = load_documents()
 
 
-    # for index, data in enumerate(range(100)) :
-    #     # gemini 접속 29번 하고 나서
-    #     print(data)
-    #     if index % 30 == 0 :
-    #         import time
-    #         time.sleep(60) # (초 단위) 쓰레드가 멈춘다
-
-
-
     actions = []
     for doc in documents :
         # chunk 만들기
@@ -174,6 +167,8 @@ def ingest_embed_documents():
                 '_id': f'{doc2["id"]}-{index}',
                 '_source': doc2
             })
+
+            time.sleep(0.7) # 0.7초 멈춤. 그러면 1분에 85회만 동작한다
 
     success, errors = helpers.bulk(
         es,
