@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 # 졍규표현식(regular expression, regExp) 사용을 위한 모듈
 import re
-from util import es, load_documents
+from util import es, load_documents, formatter
 from elasticsearch import helpers
 
 router = APIRouter(tags=["임베딩 관련 라우터"])
@@ -189,5 +189,67 @@ def get_embedding(title, content):
     # 생성한 백터를 반환한다
     # print('차원:', len(result['text_embedding'][0]['embedding']))
     return result['text_embedding'][0]['embedding']
+
+def get_keyword_embedding(keyword):
+
+    # 임베딩을 검색용으로 요청한다
+    result = es.inference.text_embedding(
+         # 저장과 검색의 모델이 동일해야 한다
+        inference_id=".multilingual-e5-small-elasticsearch",
+        input=keyword,
+        input_type="search" # ingest : 저장할 때 
+                            # search : 검색할 때
+    )
+
+    # 생성한 백터를 반환한다
+    return result['text_embedding'][0]['embedding']
+
+
+@router.get('/embed/search/vector')
+def search_vector(keyword):
+    # 검색어를 검색용 백터로 변환한다
+    vector_keyword = get_keyword_embedding(keyword)
+
+    # 엘라스틱서치에서 KNN 백터 검색을 한다
+    '''
+        KNN(K-Nearest Neighbors) 특징
+        새로운 데이터와 가장 가까운 K개를 비교해서 가장 많이 속해 있는 값을 예측
+        
+        원리가 단순해서 쉽게 이해할 수 있다
+        매번 수행한다
+
+        대용량일 때는 느리다
+        민감해서 전처리가 중요하다
+        K 값 선정이 중요하다. 성능이 막 달라진다
+    '''
+    size = 5
+    response = es.search(
+        index='computer_chunk',
+        knn={
+            # 백터 필드명
+            'field': 'embedding',
+
+            # 사용자가 입력한 검색어의 백터를
+            # 해당 필드의 백터와 유사도를 비교합니다
+            'query_vector': vector_keyword,
+
+            # 실제 검색 후보로 검토할 청크의 수
+            # k보다 많은 후보를 먼저 찾고
+            # 그 중에서 가장 유사한 k개를 선택
+            # max(a, b) : 둘 중에 큰 수가 나온다
+            #   여기서는 최소 50개를 보장한다
+            'num_candidates': max(size*10, 50),
+
+            # 가장 유사한 size개의 청크를 찾는다
+            'k': size
+        },
+        size = size
+    )
+
+    return formatter(response)
+
+
+
+
 
 
