@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 # 졍규표현식(regular expression, regExp) 사용을 위한 모듈
 import re
-from util import es, load_documents, formatter
+from util import es, load_documents, formatter, gemini
 from elasticsearch import helpers
 
 router = APIRouter(tags=["임베딩 관련 라우터"])
@@ -116,7 +116,7 @@ def create_embed_index():
                 "id": {"type": "integer"},
                 "title": {
                     "type": "text"
-                },  # 유연한값 : 백터로 분석해서 유연한 검색이 가능하다
+                },  # 유연한값 : 벡터로 분석해서 유연한 검색이 가능하다
                 "category": {
                     "type": "keyword"
                 },  # 정확한값 : 딱 완전 똑같은 단어로만 검색이 가능하다
@@ -142,6 +142,16 @@ def ingest_embed_documents():
     # json 가져오기
     documents = load_documents()
 
+
+    # for index, data in enumerate(range(100)) :
+    #     # gemini 접속 29번 하고 나서
+    #     print(data)
+    #     if index % 30 == 0 :
+    #         import time
+    #         time.sleep(60) # (초 단위) 쓰레드가 멈춘다
+
+
+
     actions = []
     for doc in documents :
         # chunk 만들기
@@ -149,8 +159,9 @@ def ingest_embed_documents():
 
         for index, chunk in enumerate(chunks):
 
-            # 백터로 변환
-            embedding = get_embedding(doc['title'], chunk)
+            # 벡터로 변환
+            # embedding = get_embedding(doc['title'], chunk)
+            embedding = get_embedding_with_llm(doc['title'], chunk)
 
             # 살짝 변형
             doc2 = doc
@@ -173,6 +184,7 @@ def ingest_embed_documents():
     )
     return {"msg": {"success": success, "errors": errors}}
 
+# 엘라스틱 모델을 사용해서 백터화 한다
 def get_embedding(title, content):
     text = f'title:{title}\ncontent:{content}'
     # 임베딩을 저장용으로 요청한다
@@ -186,9 +198,40 @@ def get_embedding(title, content):
     # print(text)
     # print(result)
 
-    # 생성한 백터를 반환한다
+    # 생성한 벡터를 반환한다
     # print('차원:', len(result['text_embedding'][0]['embedding']))
     return result['text_embedding'][0]['embedding']
+
+# gemini에서 사용할 타입들
+from google.genai import types
+# gemini를 이용해서 백터화 한다
+def get_embedding_with_llm(title, content) :
+    prompt = f'''
+        task: retrival document\n
+        title: {title}\n
+        content: {content}
+'''
+    result = gemini.models.embed_content(
+        model='gemini-embedding-2',
+
+        # 텍스트를 임베딩한다
+        contents=[
+            types.Content(
+                parts=[
+                    types.Part.from_text(text=prompt)
+                ]
+            )
+        ],
+
+        # 옵션
+        config=types.EmbedContentConfig(
+            output_dimensionality=384
+        )
+    )
+
+    return result.embeddings[0].values
+
+
 
 def get_keyword_embedding(keyword):
 
@@ -201,16 +244,43 @@ def get_keyword_embedding(keyword):
                             # search : 검색할 때
     )
 
-    # 생성한 백터를 반환한다
+    # 생성한 벡터를 반환한다
     return result['text_embedding'][0]['embedding']
+
+# 검색어를 백터로 변환한다
+def get_keyword_embedding_with_llm(keyword) :
+    prompt = f'''
+        task: retrival query\n
+        query: {keyword}
+'''
+    result = gemini.models.embed_content(
+        model='gemini-embedding-2',
+
+        # 텍스트를 임베딩한다
+        contents=[
+            types.Content(
+                parts=[
+                    types.Part.from_text(text=prompt)
+                ]
+            )
+        ],
+
+        # 옵션
+        config=types.EmbedContentConfig(
+            output_dimensionality=384
+        )
+    )
+
+    return result.embeddings[0].values
 
 
 @router.get('/embed/search/vector')
 def search_vector(keyword):
-    # 검색어를 검색용 백터로 변환한다
-    vector_keyword = get_keyword_embedding(keyword)
+    # 검색어를 검색용 벡터로 변환한다
+    # vector_keyword = get_keyword_embedding(keyword)
+    vector_keyword = get_keyword_embedding_with_llm(keyword)
 
-    # 엘라스틱서치에서 KNN 백터 검색을 한다
+    # 엘라스틱서치에서 KNN 벡터 검색을 한다
     '''
         KNN(K-Nearest Neighbors) 특징
         새로운 데이터와 가장 가까운 K개를 비교해서 가장 많이 속해 있는 값을 예측
@@ -226,11 +296,11 @@ def search_vector(keyword):
     response = es.search(
         index='computer_chunk',
         knn={
-            # 백터 필드명
+            # 벡터 필드명
             'field': 'embedding',
 
-            # 사용자가 입력한 검색어의 백터를
-            # 해당 필드의 백터와 유사도를 비교합니다
+            # 사용자가 입력한 검색어의 벡터를
+            # 해당 필드의 벡터와 유사도를 비교합니다
             'query_vector': vector_keyword,
 
             # 실제 검색 후보로 검토할 청크의 수
@@ -250,17 +320,18 @@ def search_vector(keyword):
 
 @router.get('/embed/search/hybrid')
 def hybrid(keyword) :
-    # match 검색이랑 유사도(백터) 검색을 함께 하는 하이브리드 검색
+    # match 검색이랑 유사도(벡터) 검색을 함께 하는 하이브리드 검색
 
     # match 검색(BM25) : 검색어의 형태소가 포함된 단어 검색
-    # 유사도(백터) 검색(KNN) : 검색어와 유사한 단어 검색
+    # 유사도(벡터) 검색(KNN) : 검색어와 유사한 단어 검색
     #   이미 학습되어 있는 머신러닝 모델을 활용한다
 
     # 두 결과를 RRF 방식으로 합쳐서 최종적으로 관련성 높은 문서만 반환한다
 
 
-    # 검색어를 검색용 백터로 변환한다
-    vector_keyword = get_keyword_embedding(keyword)
+    # 검색어를 검색용 벡터로 변환한다
+    # vector_keyword = get_keyword_embedding(keyword)
+    vector_keyword = get_keyword_embedding_with_llm(keyword)
 
     size = 5
     response = es.search(
@@ -271,8 +342,8 @@ def hybrid(keyword) :
         retriever={
             # RRF
             # Reciprocal Rank Fusion  상호 간의 랭킹을 통한 융합
-            # 검색은 1등, 백터는 10등 한 것과 검색 5등, 백터 2등이 있을 경우
-            # 둘다 높은 등수가 최종 순위에서도 높은 등수를 받을 가능성이 높다
+            # 검색은 1등, 벡터는 10등 한 것과 검색 5등, 벡터 2등이 있을 경우
+            # 둘 다 높은 등수가 최종 순위에서도 높은 등수를 받을 가능성이 높다
             'rrf' : {
                 # 계산에 사용되는 상수값
                 # 높은 순위와 낮은 순위의 영향력 조절 역할
@@ -301,11 +372,11 @@ def hybrid(keyword) :
                     # KNN 검색
                     {
                         'knn' : {
-                                    # 백터 필드명
+                                    # 벡터 필드명
                                     'field': 'embedding',
                         
-                                    # 사용자가 입력한 검색어의 백터를
-                                    # 해당 필드의 백터와 유사도를 비교합니다
+                                    # 사용자가 입력한 검색어의 벡터를
+                                    # 해당 필드의 벡터와 유사도를 비교합니다
                                     'query_vector': vector_keyword,
                         
                                     # 실제 검색 후보로 검토할 청크의 수

@@ -1,12 +1,18 @@
 from elasticsearch import Elasticsearch
-from config import ELASTIC_ENDPOINT, ELASTIC_API_KEY
+from config import ELASTIC_ENDPOINT, ELASTIC_API_KEY, GEMINI_API_KEY
 import json
 from pathlib import Path  # 경로 관련 라이브러리
+from google import genai
 
+# 엘라스틱서치를 클라우드에서 연결
 es = Elasticsearch(
     ELASTIC_ENDPOINT,  # 쉽게 말해 DB 연결 주소
     api_key=ELASTIC_API_KEY,  # 쉽게 말해 DB 계정
 )
+
+# gemini 연결
+gemini = genai.Client(api_key=GEMINI_API_KEY)
+
 
 # json 파일 읽어오기
 def load_documents():
