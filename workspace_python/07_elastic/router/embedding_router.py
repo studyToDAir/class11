@@ -170,7 +170,6 @@ def ingest_embed_documents():
                 '_id': f'{doc2["id"]}-{index}',
                 '_source': doc2
             })
-            print('.', end='')
             time.sleep(0.7) # 0.7초 멈춤. 그러면 1분에 85회만 동작한다
 
             if useCount > 900 :
