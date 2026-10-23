@@ -24,7 +24,7 @@ def split_text(text):
 
     # 혹시 몰라서 각 리스트 요소의 양쪽 공백 제거
     sentences2 = []
-    for s in sentences :
+    for s in sentences : 
         if s.strip() :  # 공백 제거 후에도 글이 있으면
             sentences2.append(s.strip()) # 그 글로 리스트에 추가
     sentences = sentences2

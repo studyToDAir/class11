@@ -2,6 +2,7 @@ from fastapi import APIRouter
 import traceback
 import util
 import pandas as pd
+from typing import Any
 
 router = APIRouter(tags=["엘라스틱서치"])
 
@@ -78,6 +79,7 @@ def makeContent() :
     # 장르의 리스트가 쌓인다
     result['list_genre'] = df_movies['genres'].map(parse_genre)
 
+
     # copy() : 원본을 보존하고 사본을 가져온다
     tags = df_tags[ ['movieId', 'tag'] ].copy()
 
@@ -133,10 +135,65 @@ def makeContent() :
         axis=1
     )
 
-    return result
+    # # * : 언팩킹, js의 ...과 같음
+    # # 배열을 하나씩 분리해 주는것
+    # # *[1,2,3] => 1,2,3
+    # result['content_text'] = result.apply(
+    #     lambda info : " ".join( info['title'] , *info['list_genre'] , *info['list_tag']  ).strip(),
+    #     axis=1
+    # )
+
+
+    # reset_index : pandas 내부 index를 재정리
+    # drop=True 를 안하면 새로 추가되버린다 그래서 엉망인건 버려라
+    return result.reset_index(drop=True)
 
 
 @router.get('/make/content')
 def content():
-    result = makeContent()
-    return result.head(10).to_dict(orient="records")
+    dataFrame = makeContent()
+    return dataFrame.head(10).to_dict(orient="records")
+
+
+def makeChunk() :
+    size_chunk = 50
+    overlap:int = 15
+    # chunks = []
+    # 자료형을 미리 지정하기
+    # Any : 아무형태나
+    chunks : list[dict[str, Any]] = []
+
+    dataFrame = makeContent()
+    content = dataFrame.to_dict(orient="records")
+
+    step = size_chunk - overlap
+    for info in content :
+        text = info.get('content_text', '').strip()
+        if not text :
+            continue
+
+        # for idx_start in range(0, len(text), step):
+        for idx, idx_start in enumerate( range(0, len(text), step) ):
+            chunk = text[idx_start : idx_start+size_chunk]
+            if chunk :
+                chunks.append({
+                    'movieId': int(info['movieId']),
+                    'title': str(info['title']),
+                    'genres': list(info['list_genre']),
+                    'tags': list(info['list_tag']),
+                    'content': chunk,
+                    'chunk_index': idx
+                })
+
+    return chunks
+
+@router.get("/make/chunk")
+def chunk():
+    # dict 중에서 앞에 10개만
+    return makeChunk()[0:10]
+
+def embedding_with_gemini(data):
+    pass
+def embedding_with_gpt(data):
+    pass
+
