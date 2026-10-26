@@ -13,6 +13,9 @@ import time
 
 from openai import OpenAI
 
+from elasticsearch import Elasticsearch
+es = Elasticsearch(os.getenv('ELASTIC_ENDPOINT'))
+
 def load_csv(fileName) :
     BASE_DIR = Path(__file__).resolve().parents[0] # 08_langgraph 폴더로 이동
     DOCUMENT_FILE = BASE_DIR / "data" / "ml-latest-small" / fileName
@@ -129,3 +132,20 @@ CreateEmbeddingResponse(
         time_before = time.time()
 
     return actions
+
+
+def formatter(resp):
+    results = []
+    # 우리가 넣은 내용만 쏙 빼온다
+    for hit in resp["hits"]["hits"]:
+        document = hit.get("_source", {})
+
+        results.append({
+            'document': hit.get("_source", {}),
+            'score': hit.get("_score")
+        })
+
+    return {
+        "results": results, 
+        "total": resp["hits"]["total"]["value"]
+    }

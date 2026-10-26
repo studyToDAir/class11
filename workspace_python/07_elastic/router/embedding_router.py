@@ -118,7 +118,7 @@ def create_embed_index():
                 "id": {"type": "integer"},
                 "title": {
                     "type": "text"
-                },  # 유연한값 : 벡터로 분석해서 유연한 검색이 가능하다
+                },  # 유연한값 : 형태소 분석해서 유연한 검색이 가능하다
                 "category": {
                     "type": "keyword"
                 },  # 정확한값 : 딱 완전 똑같은 단어로만 검색이 가능하다

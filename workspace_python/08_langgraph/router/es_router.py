@@ -1,8 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 import traceback
 import util
 import pandas as pd
 from typing import Any
+
+import os
+
+from elasticsearch import helpers
 
 router = APIRouter(tags=["엘라스틱서치"])
 
@@ -49,6 +53,7 @@ def valid():
 
     return result
 
+# 제목+장르들+태그들 을 한 문장으로 만들기
 def makeContent() :
     df_movies = util.load_csv('movies.csv')
     df_tags = util.load_csv('tags.csv')
@@ -154,7 +159,7 @@ def content():
     dataFrame = makeContent()
     return dataFrame.head(10).to_dict(orient="records")
 
-
+# 한줄로 만들어진 content_text를 적당히 쪼개고 겹쳐서 chunk로 만들기
 def makeChunk() :
     size_chunk = 50
     overlap:int = 15
@@ -208,14 +213,118 @@ def embedding():
 
     return actions
 
+@router.get('/es/health')
+def health():
+    return {'msg': util.es.ping()}
+
 @router.post('/es/bulk')
 def bulk():
-    target = makeChunk()[0:10]
-    actions = util.embedding_with_gemini(target)
+    # target = makeChunk()[0:10]
+    target = makeChunk()
+    # actions = util.embedding_with_gemini(target)
+    actions = util.embedding_with_openai(target)
 
     # 1. 만약에 엘라스틱서치에 인덱스가 없다면 새로 만들기
-    
+    # 있으면 삭제하기
+    if util.es.indices.exists(index=os.getenv('ES_INDEX')) :
+        util.es.indices.delete(index=os.getenv('ES_INDEX'))
+
+    # 없으면 create table
+    if not util.es.indices.exists(index=os.getenv('ES_INDEX')) :
+        '''
+        # 기본 chunk 구조
+        {
+            'index': idx_content,
+            'movieId': int(info['movieId']),
+            'title': str(info['title']),
+            'genres': list(info['list_genre']),
+            'tags': list(info['list_tag']),
+            'content': chunk,
+            'chunk_index': idx,
+
+            # util에서 추가
+            'embedding' : content의 벡터
+        }
+        
+        '''
+        mappings = {
+            'properties': {
+                'index': {'type': 'integer'},
+                'movieId': {'type': 'integer'},
+                'title': {'type': 'text'}, # keyword: 완벽히 같은 단어 검색 용
+                'genres': {'type': 'keyword'},
+                'tags': {'type': 'text'},
+                'content': {'type': 'text'}, # text: 형태소를 이용한 유연한 검색 용
+                'chunk_index': {'type': 'integer'},
+                'embedding': {
+                    'type': 'dense_vector',
+                    'dims': 768
+                },
+            }
+        }
+
+        util.es.indices.create(
+            index=os.getenv('ES_INDEX'),
+            mappings=mappings
+        )
+
     # 2. bulk로 넣기
+    success, errors = helpers.bulk(
+        util.es,
+        actions,
+        stats_only=False # 성공, 실패 숫자와 메세지
+    )
+    return {
+        'msg':{
+            'succ': success,
+            'errors': errors
+        }
+    }
+
+def search_movies(keyword: str, size: int = 10) :
+    response = util.es.search(
+        index=os.getenv('ES_INDEX'),
+        query={
+            'multi_match':{
+                'query': keyword,
+                'type':'best_fields',
+                # 'fields': ['title', 'genres', 'tags', 'content'], # ^2 가중치
+                'fields': ['title^5', 'genres^2', 'tags^2', 'content'], # ^2 가중치
+            }
+        },
+        size=size
+    )
+
+    return response
+
+@router.get('/es/select/multi_match')
+def multi_match(keyword, size=10):
+    response = search_movies(keyword, size)
+
+    return {
+        'msg': util.formatter(response)
+    }
 
 
+def term_movieId(ids: list) :
+    # term : 키워드     where id = 1
+    # terms : 리스트    where id in (1,2,3)
+    response = util.es.search(
+        index=os.getenv('ES_INDEX'),
+        query={
+            'terms':{
+                'movieId': ids,
+            }
+        },
+        size=len(ids)*5
+    )
+
+    return response
+
+@router.get('/es/select/terms')
+def terms(ids:list = Query(...)):
+    response = term_movieId(ids)
+    return {
+        'msg': util.formatter(response)
+    }
 
