@@ -167,7 +167,7 @@ def makeChunk() :
     content = dataFrame.to_dict(orient="records")
 
     step = size_chunk - overlap
-    for info in content :
+    for idx_content, info in enumerate(content) :
         text = info.get('content_text', '').strip()
         if not text :
             continue
@@ -177,12 +177,13 @@ def makeChunk() :
             chunk = text[idx_start : idx_start+size_chunk]
             if chunk :
                 chunks.append({
+                    'index': idx_content,
                     'movieId': int(info['movieId']),
                     'title': str(info['title']),
                     'genres': list(info['list_genre']),
                     'tags': list(info['list_tag']),
                     'content': chunk,
-                    'chunk_index': idx
+                    'chunk_index': idx,
                 })
 
     return chunks
@@ -192,8 +193,29 @@ def chunk():
     # dict 중에서 앞에 10개만
     return makeChunk()[0:10]
 
-def embedding_with_gemini(data):
-    pass
-def embedding_with_gpt(data):
-    pass
+
+@router.get("/make/embedding/gemini")
+def embedding():
+    target = makeChunk()[0:10]
+    actions = util.embedding_with_gemini(target)
+
+    return actions
+@router.get("/make/embedding/openai")
+def embedding():
+    target = makeChunk()[:10]
+    print(len(target))
+    actions = util.embedding_with_openai(target)
+
+    return actions
+
+@router.post('/es/bulk')
+def bulk():
+    target = makeChunk()[0:10]
+    actions = util.embedding_with_gemini(target)
+
+    # 1. 만약에 엘라스틱서치에 인덱스가 없다면 새로 만들기
+    
+    # 2. bulk로 넣기
+
+
 
