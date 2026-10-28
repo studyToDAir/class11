@@ -11,3 +11,4 @@ sentence-transformers>=3.0,<6.0
 google-genai
 openai
 python-dotenv
+scikit-surprise 
