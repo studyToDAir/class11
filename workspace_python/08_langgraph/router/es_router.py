@@ -227,8 +227,8 @@ def health():
 def bulk():
     # target = makeChunk()[0:10]
     target = makeChunk()
-    # actions = util.embedding_with_gemini(target)
-    actions = util.embedding_with_openai(target)
+    actions = util.embedding_with_gemini(target)
+    # actions = util.embedding_with_openai(target)
 
     # 1. 만약에 엘라스틱서치에 인덱스가 없다면 새로 만들기
     # 있으면 삭제하기
@@ -302,6 +302,47 @@ def search_movies(keyword: str, size: int = 10) :
     )
 
     return response
+
+
+def search_vector(keyword: str, size: int = 10) :
+
+    # 검색어를 백터로 바꾼다
+    # 그런데 기존의 embedding_with_gemini는 수정 없이 활용하고 싶다
+
+    querys = [{
+        'content': keyword,
+        'movieId':0,
+        'chunk_index':0,
+    }]
+    vectors = util.embedding_with_gemini(querys)
+    '''
+        [
+            {
+                '_index': os.getenv('ES_INDEX'),
+                '_id': f'{chunk["movieId"]}-{chunk["chunk_index"]}',
+                '_source': {
+                                'content': keyword,
+                                'embedding': vector
+                            }
+            }
+        ]
+    
+    '''
+    vector = vectors[0]['_source']['embedding']
+
+    response = util.es.search(
+        index=os.getenv('ES_INDEX'),
+        knn={
+            'field': 'embedding',
+            'query_vector': vector,
+            'num_candidates': max(size*10, 50),
+            'k': size
+        },
+        size = size
+    )
+
+    return response
+
 
 @router.get('/es/select/multi_match')
 def multi_match(keyword, size=10):
@@ -421,7 +462,8 @@ def content_based_filtering(list_movieId: list):
     # [a,b,a] >>>> {a: None, b: None}
     # 이걸 join하면 key만 빼올 수 있다
     query = " ".join( dict.fromkeys(terms) )
-    response = search_movies(query)
+    # response = search_movies(query)
+    response = search_vector(query)
 
     return response
 
@@ -533,11 +575,12 @@ def split_train_test(test_size: float = 0.2):
 
 # CF 협업 필터링 Collaborative Filtering
 # "다른 사람들은 뭘 좋아했지?"
-def collaborative_filtering(userId, top_k=10):
+def collaborative_filtering(userId:int, top_k=10):
     test, train = split_train_test()
 
     data = train[ ['userId', 'movieId', 'rating'] ].copy()
-    if userId not in data['userId'] :
+    if userId not in data['userId'].values :
+    # if userId not in data['userId'].to_numpy() :
         raise ValueError(f'{userId}을/를 찾을 수 없습니다. 일단 차가운 시선을 듣고 다시 시도 바람')
 
     # Reader는 필수
@@ -570,11 +613,13 @@ def collaborative_filtering(userId, top_k=10):
     # user_based
     #   True :  내 취향과 평점 패턴이 비슷한 다른 사용자(이웃)이 이 아이템에 몇점을 줬는가?
     #   False : 이 아이템를 좋아하는 사람들이 좋아하는 다른 유사한 아이템은?
-    n_neighbors = 30
+    # n_neighbors = 30
+    n_neighbors = 50
     model = KNNWithMeans(
         k=n_neighbors,
         sim_options={
-            'name': 'cosine',
+            # 'name': 'cosine',
+            'name': 'pearson',
             'user_based': True
         },
         verbose=False # 학습 과정 출력 여부
@@ -629,3 +674,65 @@ def collaborative_filtering(userId, top_k=10):
 @router.get('/es/recommend/cf')
 def cf(userId:int, top_k:int = 10):
     return collaborative_filtering(userId, top_k)
+
+# Recall@K
+# 전체 정답 개수 중에 맞힌 개수
+# 순위는 안 본다
+# 내 정답 개수 / 전체 정답 개수
+def recall_at_k(
+    userId:int, 
+    test:pd.DataFrame,   # 정답 데이터
+    recommend:list[dict],# 추천 목록
+    threshold: float = 4.0,
+    k:int=10
+):
+    # 내가 평점을 threshold 이상을 준 정답만 뽑자
+    # 첫 번째 전달인자 : 조건
+    # 두 번째 전달인자 : 특정 컬럼만 가져오기
+    # relevant_movies  relevant(관련된)
+    # 나와 관련된 영화 목록
+    # pandas.Series 객체는 set으로 자동 형변환이 안된다
+    # 그래서 set()으로 명시적 형변환
+    relevant_movies = set(test.loc[ 
+        # 첫 번째
+        (test['userId'] == userId)
+        & (test['rating'] >= threshold),
+
+        # 두 번째
+        'movieId'
+    ])
+    # 정답 데이터에 조건이 맞는 영화가 없어서 Recall 계산할 수 없다
+    if len(relevant_movies) == 0 :
+        return -1.0
+
+    # 암시적, 묵시적 형변환
+    recommend_moives = {
+        item['movieId'] for item in recommend[:k]
+    }
+
+    # 추천 목록 중에서 내가 좋아하는 영화의 개수
+    # 추천 중 정답 개수
+    # & : 교집합
+    hit_count = len(relevant_movies & recommend_moives)
+
+    print('hit_count', hit_count)
+    print('len(relevant_movies)', len(relevant_movies))
+
+    # Recall@K = 맞힌 개수 / 전체 정답
+    result = hit_count / len(relevant_movies)
+    return result
+
+
+@router.get('/recommend/recall')
+def recall(userId:int):
+    test,_ = split_train_test()
+    recommend = collaborative_filtering(userId, 50)
+    threshold = 2.0
+    k = 50
+
+    return recall_at_k(userId, test, recommend, threshold, k)
+
+
+
+
+
