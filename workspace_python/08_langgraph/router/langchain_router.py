@@ -1,17 +1,14 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-
-from openai import OpenAI
-
-from google import genai
-from google.genai import types
-
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+from pydantic import BaseModel
+from langchain_core.output_parsers import PydanticOutputParser, StrOutputParser
 
 router = APIRouter(tags=["langchain"])
 load_dotenv()
@@ -193,4 +190,200 @@ def messages_placeholder(name: str, prompt: str):
     })
 
     print(prompt_template)
+
+
+class Recipe(BaseModel):
+    food: list[str]
+    steps: list[str]
+
+@router.get("/langchain/ouput_parser")
+def output_parser(dish: str):
+    
+    output_parser = PydanticOutputParser(pydantic_object=Recipe)
+
+    prompt = ChatPromptTemplate.from_messages([
+        (
+            "system",
+            
+            "사용자가 입력한 요리의 레시피를 알려주세요"
+            '{format_instructions}'
+
+            # "사용자가 입력한 요리의 레시피를 알려주세요 {format_instructions}"
+        ),
+        ("human", "{dish}")
+    ])
+    prompt2 = prompt.partial(
+        format_instructions=output_parser.get_format_instructions()
+    )
+    prompt_value = prompt2.invoke({
+        "dish": dish
+    })
+
+    print(prompt_value)
+    print('*'*30)
+    
+    model = ChatOpenAI(
+        model='gpt-5.5',
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY")
+    )
+    ai_msg = model.invoke(prompt_value)
+    print(ai_msg)
+
+    result = output_parser.invoke(ai_msg)
+    return result
+
+@router.get("/langchain/str_ouput_parser")
+def str_output_parser(dish: str):
+    model = ChatOpenAI(
+        model='gpt-5.5',
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY")
+    )
+    ai_msg = model.invoke(f'{dish}의 레시피를 간략히 알려줘')
+
+    # result = StrOutputParser().parse(ai_msg) # 전문 모두 나옴
+    result = StrOutputParser().invoke(ai_msg) # content만 나옴
+    return result
+
+@router.get("/langchain/chain")
+def chain(name: str, dish: str):
+    prompt_template = ChatPromptTemplate.from_messages([
+        ("system", "너는 친절한 조수야"),
+        ("human", "내 이름은 {name}야."),
+        ("ai", "안녕하세요. {name}님! 친절히 알려드릴께요"),
+        ("human", '{prompt}') # 아직 '{prompt}'라는 글씨일 뿐이다
+    ])
+
+    model = ChatOpenAI(
+        model='gpt-5.5',
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY")
+    )
+
+    chain = prompt_template | model | StrOutputParser()
+
+    result = chain.invoke({
+        "name": name,
+        "prompt": f"{dish}의 레시피를 간략히 알려줘"
+    })
+
+    return result
+
+@router.get("/langchain/chain/pydantic")
+def chain_pydantic(dish: str):
+
+    output_parser = PydanticOutputParser(pydantic_object=Recipe)
+    prompt = ChatPromptTemplate.from_messages([
+        (
+            'system',
+            '너는 미슐렝 쉐프야. 나는 요리 초보고 자취생이라 기구가 거의 없어'
+            '내가 쉽고 빠르게 만들 수 있는 레시피를 알려줘'
+            '{format_instructions}'
+        ),
+        ('human', '{dish}')
+    ]).partial(
+        format_instructions=output_parser.get_format_instructions()
+    )
+
+    model = ChatOpenAI(
+        model='gpt-5.5',
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY")
+    ).bind(
+        # 출력 양식을 json으로 한다
+        # 이것만으로는 Recipe의 변수와 매칭되리라는 보장이 없다
+        response_format={
+            'type': 'json_object'
+        }
+    )
+
+    chain = prompt | model | output_parser
+
+    result = chain.invoke({
+        "dish": dish
+    })
+    return result
+
+@router.get("/langchain/chain/with_structured_output")
+def chain_pydantic(dish: str):
+    prompt = ChatPromptTemplate.from_messages([
+        (
+            'system',
+            '너는 미슐렝 쉐프야. 나는 요리 초보고 자취생이라 기구가 거의 없어'
+            '내가 쉽고 빠르게 만들 수 있는 레시피를 알려줘. 계량도 내 것만으로 할 수 있게'
+        ),
+        ('human', '{dish}')
+    ])
+
+    model = ChatOpenAI(
+        model='gpt-5.5',
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY")
+    )
+
+    chain = prompt | model.with_structured_output(Recipe)
+
+    return chain.invoke({
+        "dish": dish
+    })
+
+# from .es_router import hybrid
+# 최상위 폴더부터 절대 경로
+from router import es_router
+
+@router.get("/langchain/recommend/hybrid")
+def recommend_hybrid(
+    userId:int,                 # CF에서 사용할 사용자id
+    provider: Literal['gemini', 'gpt'] = 'gpt',  # 어떤 LLM을 사용할지 선택
+    top_k:int = 10,             # 결과 개수
+    candidate_size:int = 50,     # 각각의 추천의 후보 수
+    list_movieId: list[int] = Query(...)    # CBF에서 사용할 영화 목록
+):
+
+    # 예전에 만들어 뒀던 hybrid 추천 결과를 그대로 가져와서
+    # langchain으로
+    # LLM에게 이쁘게 포장해달라고 해서 그 결과를 출력한다
+    # 단, 사용자가 gpt, gemini를 선택할 수 있게 하자
+
+    prompt = ChatPromptTemplate.from_messages([
+        (
+            'system',
+            '너는 영화 추천 서비스의 설명 도우미야.'
+            '필요하면 인터넷 검색을 해서 알아봐'
+            '입력 받은 추천 결과만 사용해서 설명한다'
+            '결과는 구조적인 json으로 알려줘.'
+        ),
+        (   'human', 
+            'cbf, cf의 하이브리그 추천 결과물 : {hybrid}'
+            '제목을 한국 제목으로 변경해서도 알려줘. 단 제목을 추측하지마'
+            '영화 줄거리도 알려줘. 단 추측하지마'
+            '순위를 보고 3개 정도만 정리해주면 되'
+        )
+    ])
+
+    hybrid = es_router.hybrid(userId, top_k, candidate_size, list_movieId)
+
+    if provider == 'gemini':
+        model = ChatGoogleGenerativeAI(
+            model='gemini-3.8-flash',
+            temperature=0,
+            api_key=os.getenv("GEMINI_API_KEY")
+        )
+    else :
+        model = ChatOpenAI(
+            model='gpt-5.5',
+            temperature=0,
+            api_key=os.getenv("OPENAI_API_KEY")
+        )
+
+    chain = prompt | model | StrOutputParser()
+
+    return chain.invoke({
+        "hybrid": hybrid
+    })
+
+
+
+
 
