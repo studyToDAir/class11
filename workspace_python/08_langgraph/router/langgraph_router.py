@@ -36,7 +36,6 @@ class State(BaseModel):
     list_movieId: Optional[list[int]] = None    # CBF에서 사용할 영화 ID 목록
     userId: Optional[int] = None                # CF에서 사용할 사용자 Id
     top_k: int = 10                             # 결과물 개수
-
     question: str                               # 사용자 질문
 
     recommend_type: Optional[str] = None        # 사용할 추천 방식
@@ -46,6 +45,8 @@ class State(BaseModel):
     
     explain: Optional[str] = "LLM 응답 없음"     # 최종 답변
 
+    error: Optional[str] = None                 # 에러 메시지
+
 
 class RecommendType(BaseModel):
     recommend_type: Literal['CBF', 'CF', 'BM25'] = 'CBF' # 사용할 추천 방식
@@ -54,6 +55,9 @@ class RecommendType(BaseModel):
 
 # 질문을 기반으로 추천 방식을 선택한다
 def recommend_select(state: State):
+    '''
+        주석 달기
+    '''
     # question = state.question
 
     # 프롬프트 준비
@@ -200,7 +204,33 @@ def explain(state: State):
         'explain': result
     }
 
+def validator(state: State):
+    type = state.recommend_type
+    if type == 'CBF':
+        if state.list_movieId is None :
+            return 'ERROR'
+        # else:
+        #     return type
 
+    elif type == 'CF':
+        if state.userId is None :
+            return 'ERROR'
+
+    return type
+
+def makeErrorMessage(state: State):
+
+    error = None
+
+    type = state.recommend_type
+    if type == 'CBF':
+        error = 'list_movieId는 필수입니다'
+    elif type == 'CF':
+        error = 'userId는 필수입니다'
+
+    return {
+        'error': error
+    }
 
 # Body의 데이터를 받아야 해서 post
 @router.post('/langgraph/recommend')
@@ -217,17 +247,22 @@ def recommend(param: State):
     graph.add_node('CF', cf)
     graph.add_node('BM25', bm25)
     graph.add_node('explain', explain)
+    
+    graph.add_node('validator', validator)
+    graph.add_node('makeErrorMessage', makeErrorMessage)
 
     # 노드 간의 엣지 설정
     graph.add_edge(START, 'select')
 
     graph.add_conditional_edges(
         'select',
-        lambda s : s.recommend_type,
+        # lambda s : s.recommend_type,
+        'validator',
         {
             'CBF': 'CBF',
             'CF': 'CF',
             'BM25': 'BM25',
+            'ERROR': 'makeErrorMessage'
         }
     )
 
@@ -237,6 +272,7 @@ def recommend(param: State):
     graph.add_edge('BM25', 'explain')
 
     graph.add_edge('explain', END)
+    graph.add_edge('makeErrorMessage', END)
 
     # 실행 가능한 랭그래프 객체로 만들기
     recommend_graph = graph.compile()
