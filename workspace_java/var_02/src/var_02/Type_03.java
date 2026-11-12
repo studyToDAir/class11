@@ -142,13 +142,67 @@ public class Type_03 {
 			System.out.println(f[i]);
 		}
 		
-		
 		// 주말숙제
 		// 임시 비밀번호를 만들거다 총 10자리
+		// 0123456789
+		// aaaaaaaaA1   
 		// 대문자 하나, 소문자 하나, 숫자 하나 이상으로 구성
 		// HINT : 아스키코드, char
 		
+		char[] upper = {'A', 'B', 'C'};
+		String[] digit = {"1", "2", "3"};
+		char lower = (char)((int)(Math.random() * ( (122-97)+1))  + 97);
+		System.out.println("lower: "+ lower);
+		
+		String result = "";
+		// 최종적으로 10번 반복하기
+		// 대/소문자, 숫자를 랜덤으로 뽑아서 붙이기
+		// 각각의 카운트를 기록해둘꺼임
+		// 8쯤에서 필수요소가 빠진게 있다면 채우기
+		int cnt_upper = 0;
+		int cnt_lower = 0;
+		int cnt_num = 0;
+		for(int i=0; i<10; i++) {
+			int type = (int)(Math.random() * ( (2-0)+1))  + 0;
+			type = 0;
+			
+			if(i >= 8) {
+				if(cnt_upper < 1) {
+					type = 0;
+				} else if (cnt_lower < 1) {
+					type = 1;
+				} else if (cnt_num < 1) {
+					type = 2;
+				}
+			}
+			
+			char val = 0;
+			if(type == 0) { // 대문자
+				val = (char)((int)(Math.random() * ( (90-65)+1))  + 65);
+				cnt_upper++;
+			}else if(type == 1) { // 소문자
+				val = (char)((int)(Math.random() * ( (122-97)+1))  + 97);
+				cnt_lower++;
+			} else {	// 숫자
+				val = (char)((int)(Math.random() * ( (57-48)+1))  + 48);
+				cnt_num++;
+			}
+			
+			result += val;
+		}
+		System.out.println(result);
 		
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
