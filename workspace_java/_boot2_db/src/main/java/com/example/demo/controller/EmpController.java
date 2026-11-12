@@ -30,9 +30,12 @@ public class EmpController {
 	
 	@Autowired
 	EmpService empService;
+//	EmpService empService = new EmpServiceImpl()
 	
+//	@ResponseBody
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String hello() {
+
 		return "hello";
 	}
 	
