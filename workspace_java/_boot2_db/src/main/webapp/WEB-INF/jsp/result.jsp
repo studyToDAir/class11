@@ -7,9 +7,20 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>결과 페이지</title>
+<title><%="결과 페이지"%></title>
+
 </head>
 <body>
+<%
+	int a = 10;
+	
+// List list = (List)request.getAttribute("list");
+
+	if (a>5){
+%>
+		<div>5이상</div>
+<%	} %>
+
 <table border=1>
 	<thead>
 		<tr>

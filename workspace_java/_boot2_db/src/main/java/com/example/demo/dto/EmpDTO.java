@@ -16,6 +16,16 @@ public class EmpDTO {
 	private Integer comm;
 	private int deptno;
 	
+
+	
+	@Override
+	public String toString() {
+		return "EmpDTO [empno=" + empno + ", ename=" + ename + ", job=" + job + ", sal=" + sal + ", mgr=" + mgr
+				+ ", hiredate=" + hiredate + ", comm=" + comm + ", deptno=" + deptno + ", size=" + size + ", page="
+				+ page + ", start=" + start + ", end=" + end + ", type=" + type + ", keyword=" + keyword + ", empnos="
+				+ empnos + "]";
+	}
+
 	public int getEmpno() {
 		return empno;
 	}

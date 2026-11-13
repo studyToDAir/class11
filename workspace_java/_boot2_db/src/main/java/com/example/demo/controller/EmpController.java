@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,19 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dto.EmpDTO;
 import com.example.demo.service.EmpService;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class EmpController {
@@ -35,10 +27,15 @@ public class EmpController {
 //	@ResponseBody
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String hello() {
+		EmpDTO dto = new EmpDTO();
+		System.out.println(dto);
 
 		return "hello";
 	}
-	
+	// 사원 목록 조회
+	// "/list"로 접근하면
+	// 조회하고 결과를 "list"로 담아서
+	// result.jsp로 보낸다
 	@GetMapping("/list")
 	public String list(Model model) {
 		System.out.println("/list 실행");
